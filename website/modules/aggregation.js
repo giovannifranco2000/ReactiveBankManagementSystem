@@ -29,7 +29,8 @@ export class AccountList {
     }
 
     remove(id) {
-        
+        delete this._accounts[id];
+        reactor.dispatchEvent("render_account");
     }
 
 }
@@ -65,9 +66,6 @@ export class AccountListHTML {
 
         let row1 = document.createElement("div");
         row1.classList.add("row");
-        let colId1 = document.createElement("div");
-        colId1.classList.add("col-3");
-        colId1.textContent = "ID";
         let colFirstName1 = document.createElement("div");
         colFirstName1.classList.add("col-3");
         colFirstName1.textContent = "NOME";
@@ -77,20 +75,19 @@ export class AccountListHTML {
         let colDateOfBirth1 = document.createElement("div");
         colDateOfBirth1.classList.add("col-3");
         colDateOfBirth1.textContent = "DATA DI NASCITA";
+        let emptyColumn = document.createElement("div");
+        colDateOfBirth1.classList.add("col-3");
 
-        row1.appendChild(colId1);
         row1.appendChild(colFirstName1);
         row1.appendChild(colLastName1);
         row1.appendChild(colDateOfBirth1);
+        row1.appendChild(emptyColumn);
 
         this._container.append(row1);
 
         Object.entries(accountList.accounts).forEach(([id, account]) => {
             let row = document.createElement("div");
             row.classList.add("row");
-            let colId = document.createElement("div")
-            colId.classList.add("col-3");
-            colId.textContent = account.id;
             let colFirstName = document.createElement("div")
             colFirstName.classList.add("col-3");
             colFirstName.textContent = account.accountHolder.firstName;
@@ -100,11 +97,18 @@ export class AccountListHTML {
             let colDateOfBirth = document.createElement("div")
             colDateOfBirth.classList.add("col-3");
             colDateOfBirth.textContent = account.accountHolder.dateOfBirth;
+            let buttonColumn = document.createElement("div")
+            buttonColumn.classList.add("col-3");
+            let button = document.createElement("button");
+            button.addEventListener("click", () => {
+                accountList.remove(account.id);
+            });
+            buttonColumn.appendChild(button);
 
-            row.appendChild(colId);
             row.appendChild(colFirstName);
             row.appendChild(colLastName);
             row.appendChild(colDateOfBirth);
+            row.appendChild(buttonColumn);
 
             this._container.append(row);
         })
