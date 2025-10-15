@@ -6,16 +6,17 @@ export class AccountList {
     _accounts;
 
     constructor() {
-        this._accounts = new Array();
+        this._accounts = {};
         let savedAccounts = localStorage.getItem("accounts");
         if(savedAccounts !== null) {
             savedAccounts = JSON.parse(savedAccounts);
             savedAccounts.forEach(account => {
                 account = Object.assign(new Account(), account);
                 account.accountHolder = Object.assign(new AccountHolder(), account.accountHolder);
-                this._accounts.push(account);
+                this._accounts[account.id] = account;
             });
         }
+        reactor.registerEvent("render_account");
     }
 
     get accounts() {
@@ -23,8 +24,7 @@ export class AccountList {
     }
 
     add(account) {
-        this._accounts.push(account);
-        reactor.registerEvent("render_account");
+        this._accounts[account.id] = account;
         reactor.dispatchEvent("render_account", account);
     }
 
@@ -34,6 +34,9 @@ export class AccountList {
 
 }
 
+let accountList = new AccountList();
+export default accountList;
+
 export class AccountListHTML {
     
     _container;
@@ -42,7 +45,7 @@ export class AccountListHTML {
     constructor(accountList) {
         this._container = document.querySelector(".account-list");
         this._accountList = accountList;
-        reactor.addEventListener(() => this.render());
+        reactor.addEventListener("render_account", () => this.render());
     }
 
     get container() {
@@ -82,7 +85,7 @@ export class AccountListHTML {
 
         this._container.append(row1);
 
-        this.accountList.accounts.forEach((account) => {
+        Object.entries(accountList.accounts).forEach(([id, account]) => {
             let row = document.createElement("div");
             row.classList.add("row");
             let colId = document.createElement("div")

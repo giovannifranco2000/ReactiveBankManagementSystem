@@ -1,4 +1,5 @@
 import { Account, AccountHolder } from "/website/modules/entities.js";
+import { default as accountList } from "/website/modules/aggregation.js";
 
 class Form {
     #inputArray;
@@ -23,6 +24,7 @@ export class AccountForm extends Form {
     constructor() {
         super();
         super.submitButton.addEventListener("click", () => {
+            
             let accounts = localStorage.getItem("accounts");
             if(accounts !== null) accounts = JSON.parse(accounts);
 
@@ -42,6 +44,8 @@ export class AccountForm extends Form {
                 accounts.push(account);
                 localStorage.setItem("accounts", JSON.stringify(accounts));
             }
+
+            accountList.add(account);
         });
     }
 
