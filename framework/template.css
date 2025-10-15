@@ -1,0 +1,44 @@
+/* RESET */
+
+:root {
+    margin: none;
+    border: none;
+    padding: none;
+
+    background-color: white;
+}
+
+/* ABSTRACT COMPONENTS */
+
+/* COMPONENTS */
+
+/* apply to image tag */
+.logo {
+    width: auto;
+    height: 10%;
+}
+
+.menu {
+
+}
+
+.list {
+
+}
+
+.menu-button {
+    background-image: url("/public/menu-button.png");
+    background-size: cover;
+    border: none;
+    background-color: inherit;
+    width: 20%;
+    height: 10%;
+}
+
+.card {
+
+}
+
+.modal {
+    
+}
