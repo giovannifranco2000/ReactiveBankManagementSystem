@@ -1,8 +1,12 @@
 {
-    "type" : "module",
+    "type": "module",
     "name": "bank_management_system",
     "version": "1.0.0",
     "scripts": {
         "start": "live-server"
+    },
+    "dependencies": {
+        "bootstrap": "^5.3.8",
+        "live-server": "^1.2.2"
     }
 }

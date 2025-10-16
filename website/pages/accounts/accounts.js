@@ -1,8 +1,8 @@
 import { AccountForm } from "/website/modules/forms.js";
-import { default as accountList, AccountListHTML } from "/website/modules/aggregation.js";
+import { default as accountsController, AccountsView } from "/website/modules/aggregation.js";
 
 window.addEventListener("DOMContentLoaded", () => {
     new AccountForm();
-    let accountListHTML = new AccountListHTML(accountList);
-    accountListHTML.render();
+    let accountListHTML = new AccountsView(accountsController);
+    accountListHTML.renderAll();
 });

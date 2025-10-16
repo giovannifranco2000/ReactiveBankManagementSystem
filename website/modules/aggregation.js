@@ -1,7 +1,36 @@
 import { Account, AccountHolder } from "/website/modules/entities.js";
 import { default as reactor } from "/website/modules/reactive.js";
 
-export class AccountList {
+export class AccountsService {
+
+    // IMPLEMENT: lazy loading -> 
+    // if list was already populated, there is no need to request the database for it again
+    // all new changes will be done in frontend directly and will be sent insert/update requests to db
+    _accounts = {};
+
+    get() {
+        let savedAccounts = localStorage.getItem("accounts");
+        if(savedAccounts !== null) {
+            savedAccounts = JSON.parse(savedAccounts);
+            savedAccounts.forEach(account => {
+                account = Object.assign(new Account(), account);
+                account.accountHolder = Object.assign(new AccountHolder(), account.accountHolder);
+                this._accounts[account.id] = account;
+            });
+        }
+    }
+
+    put() {
+
+    }
+
+    delete() {
+
+    }
+
+}
+
+export class AccountsController {
 
     _accounts;
 
@@ -23,7 +52,7 @@ export class AccountList {
         return this._accounts;
     }
 
-    add(account) {
+    save(account) {
         this._accounts[account.id] = account;
         reactor.dispatchEvent("render_account", account);
     }
@@ -33,20 +62,29 @@ export class AccountList {
         reactor.dispatchEvent("render_account");
     }
 
+    find(id) {
+        return this._accounts[id];
+    }
+
+    // IMPLEMENT: filter by what? by AccountHolder?
+    filter() {
+        // renders the filtered list
+    }
+
 }
 
-let accountList = new AccountList();
-export default accountList;
+let accountsController = new AccountsController();
+export default accountsController;
 
-export class AccountListHTML {
+export class AccountsView {
     
     _container;
     _accountList;
 
     constructor(accountList) {
         this._container = document.querySelector(".account-list");
-        this._accountList = accountList;
-        reactor.addEventListener("render_account", () => this.render());
+        this._accountList = accountsController;
+        reactor.addEventListener("render_account", () => this.renderAll());
     }
 
     get container() {
@@ -61,7 +99,11 @@ export class AccountListHTML {
         return this._accountList;
     }
 
-    render() {
+    renderAdd(account) {
+
+    }
+
+    renderAll() {
         this.container.innerHTML = "";
 
         let row1 = document.createElement("div");
@@ -85,7 +127,7 @@ export class AccountListHTML {
 
         this._container.append(row1);
 
-        Object.entries(accountList.accounts).forEach(([id, account]) => {
+        Object.entries(accountsController.accounts).forEach(([id, account]) => {
             let row = document.createElement("div");
             row.classList.add("row");
             let colFirstName = document.createElement("div")
