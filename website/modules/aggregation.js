@@ -1,6 +1,8 @@
 import { Account, AccountHolder } from "/website/modules/entities.js";
 import { default as reactor } from "/website/modules/reactive.js";
 
+// IMPLEMENT: creare una classe MemoryHandler, per separazione di logiche e scalabilità
+
 export class AccountsService {
 
     // IMPLEMENT: lazy loading -> 
@@ -9,6 +11,7 @@ export class AccountsService {
     _accounts = {};
 
     get() {
+
         let savedAccounts = localStorage.getItem("accounts");
         if(savedAccounts !== null) {
             savedAccounts = JSON.parse(savedAccounts);
@@ -18,13 +21,29 @@ export class AccountsService {
                 this._accounts[account.id] = account;
             });
         }
-    }
-
-    put() {
 
     }
 
-    delete() {
+    put(account) {
+
+        let savedAccounts = localStorage.getItem("accounts");
+        if(savedAccounts === null) localStorage.setItem("accounts", JSON.stringify({ [account.id]: account }));
+        else {
+            savedAccounts = JSON.parse(savedAccounts);
+            savedAccounts[account.id] = account;
+            localStorage.setItem("accounts", JSON.stringify(savedAccounts));
+        }
+
+    }
+
+    delete(id) {
+
+        let savedAccounts = localStorage.getItem("accounts");
+        if(savedAccounts !== null) {
+            savedAccounts = JSON.parse(savedAccounts);
+            delete savedAccounts[id];
+            localStorage.setItem("accounts", JSON.stringify(savedAccounts));
+        }
 
     }
 
