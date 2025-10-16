@@ -3,18 +3,31 @@ import { default as HTTPRequest } from "/website/modules/http.js";
 import { Account, AccountHolder } from "/website/modules/entities.js";
 
 // sends HTTP requests
-export class AccountsDao {
+class AccountsDao {
 
-    create(JSONObject) {
-        HTTPRequest.post("accounts", JSONObject);
+    // SINGLETON
+    static #_instance;
+
+    constructor() {
+        if(AccountsDao.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
+        AccountsDao.#_instance = this;
     }
 
-    // handles both readAll and readById requests (overloading)
+    static get instance() {
+        if(!AccountsDao.#_instance) AccountsDao.#_instance = new AccountsDao();
+        return AccountsDao.#_instance;
+    }
+
+    create(account) {
+        HTTPRequest.post("accounts", account);
+    }
+
+    // handles both readAll() and readById() (overload)
     read(id) {
-        return id === undefined ? HTTPRequest.get("accounts") : HTTPRequest.get("accounts", id);
+        return id === undefined ? HTTPRequest.get("accounts") : HTTPRequest.get("accounts", id)[id];
     }
 
-    // IMPLEMENT: handles both HTTP put and patch requests (overloading)
+    // IMPLEMENT: handles both HTTP put and patch requests (overload)
     update(account) {
         HTTPRequest.put("accounts", account);
     }
@@ -25,79 +38,110 @@ export class AccountsDao {
 
 }
 
-let accountsDao = new AccountsDao();
+// converts objects and implements business logic
+class AccountsService {
 
-// handles 
-export class AccountsService {
+    // SINGLETON
+    static #_instance;
 
-    // IMPLEMENT: lazy loading -> 
-    // if list was already populated, there is no need to request the database for it again
-    // all new changes will be done in frontend directly and insert/update requests will be sent to db
-    // bonus: update logic should be handled directly by the database: services are a high-level entity
-    // might need a dao
-    _accounts = {};
+    constructor() {
+        if(AccountsService.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
+        AccountsService.#_instance = this;
+    }
 
-    // IMPLEMENT: assign objects using reflection from the reflection.js module
-    get() {
+    static get instance() {
+        if(!AccountsService.#_instance) AccountsService.#_instance = new AccountsService();
+        return AccountsService.#_instance;
+    }
 
-        if(Object.keys(this._accounts).length <= 0) {
-            let savedAccounts = dtoHandler.getItem("accounts");
-            if(savedAccounts !== null) {
-                savedAccounts.forEach(account => {
-                    account = Object.assign(new Account(), account);
-                    account.accountHolder = Object.assign(new AccountHolder(), account.accountHolder);
-                    this._accounts[account.id] = account;
-                });
-            }
-        }
+    #_accountsDao = AccountsDao.instance;
+    // LAZY LOADING -> request the database for data once only
+    #_accounts = {};
 
+    #load() {
+        // IMPLEMENT: assign objects using reflection from the reflective.js module
+        this.#_accountsDao.read().forEach(account => {
+            account = Object.assign(new Account(), account);
+            account.accountHolder = Object.assign(new AccountHolder(), account.accountHolder);
+            this.#_accounts[account.id] = account;
+        });
+    }
+
+    // handles both getAll() and getById() (overload)
+    get(id) {
+        // _accounts is empty: request data from database
+        if(Object.keys(this.#_accounts).length <= 0) this.#load();
+        return id === undefined ? this.#_accounts : this.#_accounts[id];
     }
 
     // handles both create and update requests
     put(account) {
-        accountsDao.update(account);
+        // instead of implementing validation logic, takes advantage of server-based logic
+        // might cause longer refresh times on a real client-server architecture
+        try {
+            if(account !== null) {
+                account.id === null ? this.#_accountsDao.create(account) : this.#_accountsDao.update(account);
+                this.#_accounts[account.id] = account;
+            }
+        } catch(error) {
+            // IMPLEMENT: error handling logic (e.g. show error in DOM)
+            console.error(error.message);
+        }
     }
 
     delete(id) {
-        accountsDao.delete(id);
+        // instead of implementing validation logic, takes advantage of server-based logic
+        // might cause longer refresh times on a real client-server architecture
+        try {
+            this.#_accountsDao.delete(id);
+            delete this.#_accounts[id];
+        } catch(error) {
+            // IMPLEMENT: error handling logic (e.g. show error in DOM)
+            console.error(error.message);
+        }
     }
 
 }
 
-export class AccountsController {
+// handles data through services, prompts views for changes, dispatches events to change detection
+// DEBUG: error handling?
+class AccountsController {
 
-    _accounts;
+    // SINGLETON
+    static #_instance;
 
     constructor() {
-        this._accounts = {};
-        let savedAccounts = localStorage.getItem("accounts");
-        if(savedAccounts !== null) {
-            savedAccounts = JSON.parse(savedAccounts);
-            savedAccounts.forEach(account => {
-                account = Object.assign(new Account(), account);
-                account.accountHolder = Object.assign(new AccountHolder(), account.accountHolder);
-                this._accounts[account.id] = account;
-            });
-        }
-        reactor.registerEvent("render_account");
+        if(AccountsController.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
+        AccountsController.#_instance = this;
+        reactor.registerEvent("render_accounts");
     }
 
-    get accounts() {
-        return this._accounts;
+    static get instance() {
+        if(!AccountsController.#_instance) AccountsController.#_instance = new AccountsController();
+        return AccountsController.#_instance;
     }
+
+    #_accountsService = AccountsService.instance;
+    #_accountsView = AccountsView.instance;
 
     save(account) {
-        this._accounts[account.id] = account;
-        reactor.dispatchEvent("render_account", account);
+        this.#_accountsService.put(account);
+        reactor.dispatchEvent(
+            "render_accounts",
+            this.#_accountsView.newAccountNode(account)
+        );
     }
 
     remove(id) {
-        delete this._accounts[id];
-        reactor.dispatchEvent("render_account");
+        this.#_accountsService.delete(id);
+        reactor.dispatchEvent("render_accounts", id);
     }
 
     find(id) {
-        return this._accounts[id];
+        reactor.dispatchEvent(
+            "render_accounts",
+            this.#_accountsView.newAccountNodeList(this.#_accountsService.get(id))
+        );
     }
 
     // IMPLEMENT: filter by what? by AccountHolder?
@@ -107,87 +151,71 @@ export class AccountsController {
 
 }
 
-let accountsController = new AccountsController();
-export default accountsController;
+class AccountsView {
 
-export class AccountsView {
-    
-    _container;
-    _accountList;
+    // SINGLETON
+    static #_instance;
 
-    constructor(accountList) {
-        this._container = document.querySelector(".account-list");
-        this._accountList = accountsController;
-        reactor.addEventListener("render_account", () => this.renderAll());
+    constructor() {
+        if(AccountsView.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
+        AccountsView.#_instance = this;
     }
 
-    get container() {
-        return this._container;
+    static get instance() {
+        if(!AccountsView.#_instance) AccountsView.#_instance = new AccountsView();
+        return AccountsView.#_instance;
     }
 
-    set container(container) {
-        this._container = container;
+    #genericAccountNode(dataValue, col1Content, col2Content, col3Content, col4Content) {
+        let row = document.createElement("div");
+        row.classList.add("row");
+        row.setAttribute("data", `value="${dataValue}"`);
+
+        let col1 = document.createElement("div")
+        col1.classList.add("col-3");
+        col1.textContent = col1Content;
+
+        let col2 = document.createElement("div")
+        col2.classList.add("col-3");
+        col2.textContent = col2Content;
+
+        let col3 = document.createElement("div")
+        col3.classList.add("col-3");
+        col3.textContent = col3Content;
+
+        let col4 = document.createElement("div")
+        col4.classList.add("col-3");
+        col4.innerHTML = col4Content;
+
+        row.appendChild(col1);
+        row.appendChild(col2);
+        row.appendChild(col3);
+        row.appendChild(col4);
+
+        return row;
     }
 
-    get accountList() {
-        return this._accountList;
+    newAccountNode(account) {
+        let button = document.createElement("button");
+        // button.addEventListener("click", () => {
+        //     accountList.remove(account.id);
+        // });
+
+        return this.#genericAccountNode(
+            account.id,
+            account.accountHolder.firstName,
+            account.accountHolder.lastName,
+            account.accountHolder.dateOfBirth,
+            button
+        );
     }
 
-    renderAdd(account) {
-
-    }
-
-    renderAll() {
-        this.container.innerHTML = "";
-
-        let row1 = document.createElement("div");
-        row1.classList.add("row");
-        let colFirstName1 = document.createElement("div");
-        colFirstName1.classList.add("col-3");
-        colFirstName1.textContent = "NOME";
-        let colLastName1 = document.createElement("div");
-        colLastName1.classList.add("col-3");
-        colLastName1.textContent = "COGNOME";
-        let colDateOfBirth1 = document.createElement("div");
-        colDateOfBirth1.classList.add("col-3");
-        colDateOfBirth1.textContent = "DATA DI NASCITA";
-        let emptyColumn = document.createElement("div");
-        colDateOfBirth1.classList.add("col-3");
-
-        row1.appendChild(colFirstName1);
-        row1.appendChild(colLastName1);
-        row1.appendChild(colDateOfBirth1);
-        row1.appendChild(emptyColumn);
-
-        this._container.append(row1);
-
-        Object.entries(accountsController.accounts).forEach(([id, account]) => {
-            let row = document.createElement("div");
-            row.classList.add("row");
-            let colFirstName = document.createElement("div")
-            colFirstName.classList.add("col-3");
-            colFirstName.textContent = account.accountHolder.firstName;
-            let colLastName = document.createElement("div")
-            colLastName.classList.add("col-3");
-            colLastName.textContent = account.accountHolder.lastName;
-            let colDateOfBirth = document.createElement("div")
-            colDateOfBirth.classList.add("col-3");
-            colDateOfBirth.textContent = account.accountHolder.dateOfBirth;
-            let buttonColumn = document.createElement("div")
-            buttonColumn.classList.add("col-3");
-            let button = document.createElement("button");
-            button.addEventListener("click", () => {
-                accountList.remove(account.id);
-            });
-            buttonColumn.appendChild(button);
-
-            row.appendChild(colFirstName);
-            row.appendChild(colLastName);
-            row.appendChild(colDateOfBirth);
-            row.appendChild(buttonColumn);
-
-            this._container.append(row);
-        })
+    newAccountNodeList(accounts) {
+        let nodes = new Array(this.#genericAccountNode("", "NOME", "COGNOME", "DATA DI NASCITA", ""));
+        Object.values(accounts).forEach((account) => nodes.push(this.newAccountNode(account)));
+        return nodes;
     }
 
 }
+
+export default AccountsController.instance;

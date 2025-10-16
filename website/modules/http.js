@@ -10,7 +10,7 @@ class HTTPRequest {
     get(table, id) {
         if(id === null || id <= 0) throw new Error("server error: invalid id");
         let queryResult = JSON.parse(localStorage.getItem(table) ?? "{}");
-        return id === undefined ? queryResult : queryResult[id];
+        return id === undefined ? queryResult : { id : queryResult[id] };
     }
 
     post(table, object) {
@@ -32,6 +32,7 @@ class HTTPRequest {
     }
 
     delete(table, id) {
+        // just for optimization purposes: not needed
         if(id === null || id <= 0) throw new Error("server error: invalid id");
         let queryResult = JSON.parse(localStorage.getItem(table) ?? "{}");
         // just for optimization purposes: not needed

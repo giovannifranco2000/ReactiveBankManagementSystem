@@ -16,11 +16,21 @@ class Event {
 
 export class Reactor {
 
-    events;
+    // SINGLETON
+    static #_instance;
 
     constructor() {
+        if(Reactor.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
+        Reactor.#_instance = this;
         this.events = {};
     }
+
+    static get instance() {
+        if(!Reactor.#_instance) Reactor.#_instance = new Reactor();
+        return Reactor.#_instance;
+    }
+
+    events;
 
     registerEvent(eventName) {
         this.events[eventName] = new Event(eventName);
@@ -36,4 +46,4 @@ export class Reactor {
 
 }
 
-export default new Reactor();
+export default Reactor.instance;

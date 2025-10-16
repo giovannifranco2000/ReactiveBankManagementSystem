@@ -1,5 +1,5 @@
 import { Account, AccountHolder } from "/website/modules/entities.js";
-import { default as accountList } from "/website/modules/aggregation.js";
+import { default as accountController } from "/website/modules/aggregation.js";
 
 class Form {
     #inputArray;
