@@ -1,50 +1,65 @@
-import { Account, AccountHolder } from "/website/modules/entities.js";
 import { default as reactor } from "/website/modules/reactive.js";
+import { default as HTTPRequest } from "/website/modules/http.js";
+import { Account, AccountHolder } from "/website/modules/entities.js";
 
-// IMPLEMENT: creare una classe MemoryHandler, per separazione di logiche e scalabilità
+// sends HTTP requests
+export class AccountsDao {
 
+    create(JSONObject) {
+        HTTPRequest.post("accounts", JSONObject);
+    }
+
+    // handles both readAll and readById requests (overloading)
+    read(id) {
+        return id === undefined ? HTTPRequest.get("accounts") : HTTPRequest.get("accounts", id);
+    }
+
+    // IMPLEMENT: handles both HTTP put and patch requests (overloading)
+    update(account) {
+        HTTPRequest.put("accounts", account);
+    }
+
+    delete(id) {
+        HTTPRequest.delete("accounts", id);
+    }
+
+}
+
+let accountsDao = new AccountsDao();
+
+// handles 
 export class AccountsService {
 
     // IMPLEMENT: lazy loading -> 
     // if list was already populated, there is no need to request the database for it again
-    // all new changes will be done in frontend directly and will be sent insert/update requests to db
+    // all new changes will be done in frontend directly and insert/update requests will be sent to db
+    // bonus: update logic should be handled directly by the database: services are a high-level entity
+    // might need a dao
     _accounts = {};
 
+    // IMPLEMENT: assign objects using reflection from the reflection.js module
     get() {
 
-        let savedAccounts = localStorage.getItem("accounts");
-        if(savedAccounts !== null) {
-            savedAccounts = JSON.parse(savedAccounts);
-            savedAccounts.forEach(account => {
-                account = Object.assign(new Account(), account);
-                account.accountHolder = Object.assign(new AccountHolder(), account.accountHolder);
-                this._accounts[account.id] = account;
-            });
+        if(Object.keys(this._accounts).length <= 0) {
+            let savedAccounts = dtoHandler.getItem("accounts");
+            if(savedAccounts !== null) {
+                savedAccounts.forEach(account => {
+                    account = Object.assign(new Account(), account);
+                    account.accountHolder = Object.assign(new AccountHolder(), account.accountHolder);
+                    this._accounts[account.id] = account;
+                });
+            }
         }
 
     }
 
+    // handles both create and update requests
     put(account) {
-
-        let savedAccounts = localStorage.getItem("accounts");
-        if(savedAccounts === null) localStorage.setItem("accounts", JSON.stringify({ [account.id]: account }));
-        else {
-            savedAccounts = JSON.parse(savedAccounts);
-            savedAccounts[account.id] = account;
-            localStorage.setItem("accounts", JSON.stringify(savedAccounts));
-        }
-
+        accountsDao.update(account);
     }
 
     delete(id) {
-
-        let savedAccounts = localStorage.getItem("accounts");
-        if(savedAccounts !== null) {
-            savedAccounts = JSON.parse(savedAccounts);
-            delete savedAccounts[id];
-            localStorage.setItem("accounts", JSON.stringify(savedAccounts));
-        }
-
+        accountsDao.delete(id);
     }
 
 }
