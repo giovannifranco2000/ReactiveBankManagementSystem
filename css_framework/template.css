@@ -1,0 +1,53 @@
+/* RESET */
+
+:root {
+    margin: none;
+    border: none;
+    padding: none;
+
+    background-color: white;
+}
+
+/* DIMENSION CLASSES */
+
+.small {
+    width: auto;
+    height: 20%;
+}
+
+.medium {
+    width: auto;
+    height: 40%;
+}
+
+.big {
+    width: auto;
+    height: 60%;
+}
+
+/* POSITION CLASSES */
+
+/* GROUPS */
+
+/* ABSTRACT COMPONENTS */
+
+.hoverable:hover {
+    cursor: pointer;
+}
+
+/* COMPONENTS */
+
+.menu-button {
+    position: fixed;
+    top: 100%;
+    left: 100%;
+    transform: translate(-100%, -100%);
+}
+
+.card {
+
+}
+
+.modal {
+    
+}
