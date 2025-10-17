@@ -1,4 +1,4 @@
-// implements: this class should actually send http requests to a simulated server.
+// IMPLEMENT: this class should actually send http requests to a simulated server.
 // at the moment, it handles direct contact with the database (localStorage),
 // so, missing server and backend.
 // each table in the database is treated like a JSON object.
@@ -36,8 +36,8 @@ class HTTPRequest {
         if(id === null || id <= 0) throw new Error("server error: invalid id");
         let queryResult = JSON.parse(localStorage.getItem(table) ?? "{}");
         // just for optimization purposes: not needed
-        if(queryResult[object.id] !== null) {
-            delete queryResult[object.id];
+        if(queryResult[id] !== null) {
+            delete queryResult[id];
             localStorage.setItem(table, JSON.stringify(queryResult));
         }
     }

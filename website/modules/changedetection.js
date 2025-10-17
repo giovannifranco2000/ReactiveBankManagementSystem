@@ -26,23 +26,32 @@ class ChangeDetection {
 
     #_containers;
 
-    // IMPLEMENT: could be a solution to the change detection issue below
     registerContainer(eventName, containerClass) {
         let container = document.querySelector("." + containerClass);
         if(container !== null) this.#_containers[eventName] = container;
     }
 
     listen() {
-        reactor.addEventListener("render_accounts", (event, ...eventArgs) => {
-            if(eventArgs.length === 1) {
-                if(eventArgs[0] instanceof Number) {
+        reactor.addEventListener("render_accounts", (event, arg) => {
+            let container = this.#_containers[event.name];
+            if(container) {
+                if(typeof arg === "number") {
 
-                } else if(eventArgs[0] instanceof HTMLElement) {
-                    
-                } else if(Array.isArray(eventArgs[0])) {
+                    container.querySelector(`[data-id="${arg}"]`).remove();
+                
+                } else if(arg instanceof HTMLElement) {
 
-                } else console.warn("illegal event argument: no action expected\n" + event)
-            }
+                    // IMPLEMENT: UPDATE
+                    let oldElement = container.querySelector(`[data-id="${arg.dataset.id}"]`)
+                    oldElement ? oldElement.replaceWith(arg) : container.appendChild(arg);
+
+                } else if(Array.isArray(arg)) {
+
+                    container.innerHTML = "";
+                    for(let node of arg) container.appendChild(node);
+
+                } else console.warn("illegal event call: illegal argument type, no action expected\n" + event)  
+            } else console.warn("illegal event call: container not found, no action expected\n" + event)   
         })
     }
 

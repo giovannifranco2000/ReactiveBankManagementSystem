@@ -60,7 +60,7 @@ class AccountsService {
 
     #load() {
         // IMPLEMENT: assign objects using reflection from the reflective.js module
-        this.#_accountsDao.read().forEach(account => {
+        Object.values(this.#_accountsDao.read()).forEach(account => {
             account = Object.assign(new Account(), account);
             account.accountHolder = Object.assign(new AccountHolder(), account.accountHolder);
             this.#_accounts[account.id] = account;
@@ -113,6 +113,7 @@ class AccountsController {
     constructor() {
         if(AccountsController.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
         AccountsController.#_instance = this;
+        this.#removeCallback = (id) => this.remove(id);
     }
 
     static get instance() {
@@ -123,17 +124,14 @@ class AccountsController {
     #_accountsService = AccountsService.instance;
     #_accountsView = AccountsView.instance;
 
+    #removeCallback;
+
     save(account) {
         this.#_accountsService.put(account);
 
-        let self = this;
-        function removeCallback() {
-            self.remove(account.id);
-        }
-
         reactor.dispatchEvent(
             "render_accounts",
-            this.#_accountsView.newAccountNode(account, removeCallback)
+            this.#_accountsView.newAccountNode(account, this.#removeCallback)
         );
     }
 
@@ -145,7 +143,7 @@ class AccountsController {
     find(id) {
         reactor.dispatchEvent(
             "render_accounts",
-            this.#_accountsView.newAccountNodeList(this.#_accountsService.get(id))
+            this.#_accountsView.newAccountNodeList(this.#_accountsService.get(id), this.#removeCallback)
         );
     }
 
@@ -171,26 +169,34 @@ class AccountsView {
         return AccountsView.#_instance;
     }
 
-    #genericAccountNode(dataValue, col1Content, col2Content, col3Content, col4Content) {
+    #genericAccountNode(dataId, col1Content, col2Content, col3Content, col4Content) {
         let row = document.createElement("div");
         row.classList.add("row");
-        row.setAttribute("data", `value="${dataValue}"`);
+        if(dataId) row.dataset.id = dataId;
 
         let col1 = document.createElement("div")
         col1.classList.add("col-3");
+        col1Content instanceof HTMLElement ? 
+        col1.appendChild(col1Content) :
         col1.textContent = col1Content;
 
         let col2 = document.createElement("div")
         col2.classList.add("col-3");
+        col2Content instanceof HTMLElement ? 
+        col2.appendChild(col2Content) : 
         col2.textContent = col2Content;
 
         let col3 = document.createElement("div")
         col3.classList.add("col-3");
+        col3Content instanceof HTMLElement ? 
+        col3.appendChild(col3Content) : 
         col3.textContent = col3Content;
 
         let col4 = document.createElement("div")
         col4.classList.add("col-3");
-        col4.innerHTML = col4Content;
+        col4Content instanceof HTMLElement ? 
+        col4.appendChild(col4Content) : 
+        col4.textContent = col4Content;
 
         row.appendChild(col1);
         row.appendChild(col2);
@@ -202,7 +208,8 @@ class AccountsView {
 
     newAccountNode(account, buttonCallback) {
         let button = document.createElement("button");
-        button.addEventListener("click", buttonCallback);
+        button.textContent = "ELIMINA"
+        button.addEventListener("click", () => buttonCallback(account.id));
 
         return this.#genericAccountNode(
             account.id,
@@ -213,9 +220,10 @@ class AccountsView {
         );
     }
 
-    newAccountNodeList(accounts) {
+    newAccountNodeList(accounts, buttonCallback) {
         let nodes = new Array(this.#genericAccountNode("", "NOME", "COGNOME", "DATA DI NASCITA", ""));
-        Object.values(accounts).forEach((account) => nodes.push(this.newAccountNode(account)));
+
+        Object.values(accounts).forEach((account) => nodes.push(this.newAccountNode(account, buttonCallback)));
         return nodes;
     }
 

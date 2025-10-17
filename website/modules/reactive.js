@@ -12,6 +12,10 @@ class Event {
         this.callbacks.push(callback);
     }
 
+    toString() {
+        return "[ event: " + this.name + " ]";
+    }
+
 }
 
 export class Reactor {
