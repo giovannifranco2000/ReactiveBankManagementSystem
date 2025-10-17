@@ -70,8 +70,8 @@ export class Account extends Entity {
 
 export class Transaction extends Entity {
     #date;
-    #idStartingAccount;
-    #idFinalAccount;
+    #idRemitterAccount;
+    #idBeneficiaryAccount;
 
     constructor(date, idStartingAccount, idFinalAccount) {
         super();

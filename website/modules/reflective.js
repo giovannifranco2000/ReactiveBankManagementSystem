@@ -1,11 +1,11 @@
 class Factory {
 
     // IMPLEMENT: use Object.prototype a/o Reflect.construct to assign nested objects
-    make(type, ...args) {
+    fromJSON(type, ...args) {
         return Object.assign(type, args);
     }
 
-    unmake(object) {
+    toJSON(object) {
         return JSON.parse(JSON.stringify(object));
     }
 
