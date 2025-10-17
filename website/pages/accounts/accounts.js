@@ -1,8 +1,7 @@
+import { default as changeDetection } from "/website/modules/changedetection.js";
 import { AccountForm } from "/website/modules/forms.js";
-import { default as accountsController, AccountsView } from "/website/modules/aggregation.js";
 
 window.addEventListener("DOMContentLoaded", () => {
+    changeDetection.registerContainer("render_accounts", "account-list");
     new AccountForm();
-    let accountListHTML = new AccountsView(accountsController);
-    accountListHTML.renderAll();
 });

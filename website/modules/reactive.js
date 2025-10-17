@@ -36,8 +36,8 @@ export class Reactor {
         this.events[eventName] = new Event(eventName);
     }
 
-    dispatchEvent(eventName, eventArgs) {
-        this.events[eventName].callbacks.forEach((callback) => callback(eventArgs)); 
+    dispatchEvent(eventName, ...eventArgs) {
+        this.events[eventName].callbacks.forEach((callback) => callback(this.events[eventName], ...eventArgs)); 
     }
 
     addEventListener(eventName, callback) {

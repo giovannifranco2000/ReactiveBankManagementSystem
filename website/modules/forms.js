@@ -1,52 +1,46 @@
 import { Account, AccountHolder } from "/website/modules/entities.js";
-import { default as accountController } from "/website/modules/aggregation.js";
+import { default as accountsController } from "/website/modules/aggregation.js";
 
 class Form {
-    #inputArray;
-    #submitButton;
 
-    constructor() {
-        this.#inputArray = document.querySelectorAll(".form-input");
-        this.#submitButton = document.querySelector(".submit-button");
+    #form;
+
+    constructor(formNodeCallback, constructCallback) {
+        this.#form = formNodeCallback() ?? document.querySelector("form");
+        this.onSubmit(constructCallback);
     }
 
-    get inputArray() {
-        return this.#inputArray;
+    get form() {
+        return this.#form;
     }
 
-    get submitButton() {
-        return this.#submitButton;
+    onSubmit(constructCallback) {
+        this.#form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            let formData = new FormData(event.target);
+            accountsController.save(constructCallback(formData))
+        })
     }
+
 }
 
 export class AccountForm extends Form {
 
     constructor() {
-        super();
-        super.submitButton.addEventListener("click", () => {
-            
-            let accounts = localStorage.getItem("accounts");
-            if(accounts !== null) accounts = JSON.parse(accounts);
-
-            let account = new Account(
-                new AccountHolder(
-                    // firstName
-                    super.inputArray[0].value,
-                    // lastName
-                    super.inputArray[1].value,
-                    // dateOfBirth
-                    super.inputArray[2].value,
-                )
-            );
-
-            if(accounts === null) localStorage.setItem("accounts", JSON.stringify(new Array(account)));
-            else {
-                accounts.push(account);
-                localStorage.setItem("accounts", JSON.stringify(accounts));
+        // IMPLEMENT: this structure reminds me a lot of Promise Chaining.
+        // Could I use Promises to obtain the same result?
+        super(
+            () => document.querySelector("form.account-form"),
+            (formData) => {
+                return new Account(
+                    new AccountHolder(
+                        formData.get("first-name"),
+                        formData.get("last-name"),
+                        formData.get("date-of-birth")
+                    )
+                );
             }
-
-            accountList.add(account);
-        });
+        );
     }
 
 }

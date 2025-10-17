@@ -113,7 +113,6 @@ class AccountsController {
     constructor() {
         if(AccountsController.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
         AccountsController.#_instance = this;
-        reactor.registerEvent("render_accounts");
     }
 
     static get instance() {
@@ -126,9 +125,15 @@ class AccountsController {
 
     save(account) {
         this.#_accountsService.put(account);
+
+        let self = this;
+        function removeCallback() {
+            self.remove(account.id);
+        }
+
         reactor.dispatchEvent(
             "render_accounts",
-            this.#_accountsView.newAccountNode(account)
+            this.#_accountsView.newAccountNode(account, removeCallback)
         );
     }
 
@@ -195,11 +200,9 @@ class AccountsView {
         return row;
     }
 
-    newAccountNode(account) {
+    newAccountNode(account, buttonCallback) {
         let button = document.createElement("button");
-        // button.addEventListener("click", () => {
-        //     accountList.remove(account.id);
-        // });
+        button.addEventListener("click", buttonCallback);
 
         return this.#genericAccountNode(
             account.id,
