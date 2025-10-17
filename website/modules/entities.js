@@ -73,11 +73,11 @@ export class Transaction extends Entity {
     #idRemitterAccount;
     #idBeneficiaryAccount;
 
-    constructor(date, idStartingAccount, idFinalAccount) {
+    constructor(date, idRemitterAccount, idBeneficiaryAccount) {
         super();
         this.#date = date;
-        this.#idStartingAccount = idStartingAccount;
-        this.#idFinalAccount = idFinalAccount;
+        this.#idRemitterAccount = idRemitterAccount;
+        this.#idBeneficiaryAccount = idBeneficiaryAccount;
     }
 
     get date() {
@@ -88,19 +88,19 @@ export class Transaction extends Entity {
         this.#date = date;
     }
 
-    get idStartingAccount() {
-        return this.#idStartingAccount;
+    get idRemitterAccount() {
+        return this.#idRemitterAccount;
     }
 
-    set idStartingAccount(idStartingAccount) {
-        this.#idStartingAccount = idStartingAccount;
+    set idRemitterAccount(idRemitterAccount) {
+        this.#idRemitterAccount = idRemitterAccount;
     }
 
-    get idFinalAccount() {
-        return this.#idFinalAccount;
+    get idBeneficiaryAccount() {
+        return this.#idBeneficiaryAccount;
     }
 
-    set idFinalAccount(idFinalAccount) {
-        this.#idFinalAccount = idFinalAccount;
+    set idBeneficiaryAccount(idBeneficiaryAccount) {
+        this.#idBeneficiaryAccount = idBeneficiaryAccount;
     }
 }
