@@ -1,8 +1,10 @@
 class Factory {
 
-    // IMPLEMENT: use Object.prototype a/o Reflect.construct to assign nested objects
-    fromJSON(type, ...args) {
-        return Object.assign(type, args);
+    fromJSON(type, json) {
+        const object = Reflect.construct(type, []);
+        let result = Object.assign(object, json);
+        // IMPLEMENT: object hydration -> each nested object should be assigned
+        return result;
     }
 
     toJSON(object) {
