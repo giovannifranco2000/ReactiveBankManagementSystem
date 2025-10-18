@@ -8,7 +8,7 @@ function updateSizeUnit() {
     const vmax = Math.max(vw, vh);
 
     const size = (vmax / vmin) + (vmin / vmax);
-    root.style.setProperty("--object-size-unit", size + "px");
+    root.style.setProperty("--self-contained-size-unit", size + "px");
 }
 
 let resizeTimer;

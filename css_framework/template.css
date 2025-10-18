@@ -3,11 +3,16 @@
 :root {
     background-color: white;
 
-    --object-size-unit: 10px;
-    --container-size-unit: 1vw;
-    --font-small: calc(5 * var(--object-size-unit));
-    --font-medium: calc(10 * var(--object-size-unit));
-    --font-big: calc(20 * var(--object-size-unit));
+    /* dinamically set through js: (1vmax / 1vmin) + (1vmin / 1vmax) */
+    --self-contained-size-unit: 10px;
+
+    --width-reliant-size-unit: 1vw;
+
+    --height-reliant-size-unit: 1vh;
+
+    --font-small: calc(5 * var(--self-contained-size-unit));
+    --font-medium: calc(10 * var(--self-contained-size-unit));
+    --font-big: calc(20 * var(--self-contained-size-unit));
 }
 
 :root, :root * {
@@ -27,43 +32,43 @@ form {
 /* DIMENSION AND SHAPE CLASSES */
 
 .xxxxs {
-    width: calc(20 * var(--object-size-unit));
+    width: calc(20 * var(--self-contained-size-unit));
 }
 
 .xxxs {
-    width: calc(60 * var(--object-size-unit));
+    width: calc(60 * var(--self-contained-size-unit));
 }
 
 .xxs {
-    width: calc(90 * var(--object-size-unit));
+    width: calc(90 * var(--self-contained-size-unit));
 }
 
 .xs {
-    width: calc(120 * var(--object-size-unit));
+    width: calc(120 * var(--self-contained-size-unit));
 }
 
 .m {
-    width: calc(150 * var(--object-size-unit));
+    width: calc(150 * var(--self-contained-size-unit));
 }
 
 .l {
-    width: calc(180 * var(--object-size-unit));
+    width: calc(180 * var(--self-contained-size-unit));
 }
 
 .xl {
-    width: calc(210 * var(--object-size-unit));
+    width: calc(210 * var(--self-contained-size-unit));
 }
 
 .xxl {
-    width: calc(240 * var(--object-size-unit));
+    width: calc(240 * var(--self-contained-size-unit));
 }
 
 .xxxl {
-    width: calc(270 * var(--object-size-unit));
+    width: calc(270 * var(--self-contained-size-unit));
 }
 
 .xxxxl {
-    width: calc(300 * var(--object-size-unit));
+    width: calc(300 * var(--self-contained-size-unit));
 }
 
 .full {
@@ -115,19 +120,19 @@ form {
 }
 
 .form-input {
-    border: var(--object-size-unit) solid black;
+    border: var(--self-contained-size-unit) solid black;
     border-radius: 5px 5px 5px 5px;
 }
 
 .card {
-    width: calc(30 * var(--container-size-unit));
+    width: calc(30 * var(--width-reliant-size-unit));
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: var(--object-size-unit) solid black;
-    border-radius: calc(5 * var(--object-size-unit));
-    padding: calc(10 * var(--object-size-unit));
+    border: var(--self-contained-size-unit) solid black;
+    border-radius: calc(5 * var(--self-contained-size-unit));
+    padding: calc(10 * var(--self-contained-size-unit));
 }
 
 .card-title {
@@ -148,12 +153,12 @@ form {
 .form-element {
     display: flex;
     align-items: center;
-    margin: calc(5 * var(--object-size-unit)) 0px calc(5 * var(--object-size-unit)) 0px;
+    margin: calc(5 * var(--self-contained-size-unit)) 0px calc(5 * var(--self-contained-size-unit)) 0px;
 }
 
 .form-element * {
     width: 50%;
-    margin: calc(3 * var(--object-size-unit));
+    margin: calc(3 * var(--self-contained-size-unit));
 }
 
 .modal {
