@@ -6,7 +6,7 @@
     <title>Homepage</title>
 
     <!-- usato solo per classi strutturali, raggruppamenti e media queries -->
-    <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> -->
 
     <link rel="stylesheet" href="css_framework/template.css">
     <script src="css_framework/script.js"></script>
@@ -47,27 +47,30 @@
 
     <main>
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <p>Informazioni sulla banca</p>
-                </div>
-            </div>
-            <!-- <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <p>dati di login</p>
+        <div class="card">
+            <div class="card-title">LOGIN</div>
+            <div class="card-body">
+                <form>
+                    <div class="form-element">
+                        <label for="username">Username:</label>
+                        <input type="text" name="username" id="username" class="form-input half">
                     </div>
-                </div>
-            </div> -->
+                    <div class="form-element">
+                        <label for="password">Password:</label>
+                        <input type="password" name="password" id="password" class="form-input half">
+                    </div>
+                </form>
+            </div>
         </div>
         
     </main>
 
     <footer>
         <picture>
-            <img src="/public/logo.svg" class="hoverable small menu-button" alt="bank logo">
+            <img src="/public/logo.svg" class="hoverable xxxs square fixed bottom-right svg" alt="bank logo">
         </picture>
+
+        </div>
     </footer>
 </body>
 </html>

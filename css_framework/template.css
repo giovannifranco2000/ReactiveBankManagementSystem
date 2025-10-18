@@ -1,33 +1,106 @@
 /* RESET */
 
 :root {
+    background-color: white;
+
+    --object-size-unit: 10px;
+    --container-size-unit: 1vw;
+    --font-small: calc(5 * var(--object-size-unit));
+    --font-medium: calc(10 * var(--object-size-unit));
+    --font-big: calc(20 * var(--object-size-unit));
+}
+
+:root, :root * {
     margin: none;
     border: none;
     padding: none;
 
-    background-color: white;
+    font-weight: normal;
+    font-style: normal;
+    font-size: normal;
 }
 
-/* DIMENSION CLASSES */
-
-.small {
-    width: auto;
-    height: 20%;
+form {
+    display: contents;
 }
 
-.medium {
-    width: auto;
-    height: 40%;
+/* DIMENSION AND SHAPE CLASSES */
+
+.xxxxs {
+    width: calc(20 * var(--object-size-unit));
 }
 
-.big {
-    width: auto;
-    height: 60%;
+.xxxs {
+    width: calc(60 * var(--object-size-unit));
+}
+
+.xxs {
+    width: calc(90 * var(--object-size-unit));
+}
+
+.xs {
+    width: calc(120 * var(--object-size-unit));
+}
+
+.m {
+    width: calc(150 * var(--object-size-unit));
+}
+
+.l {
+    width: calc(180 * var(--object-size-unit));
+}
+
+.xl {
+    width: calc(210 * var(--object-size-unit));
+}
+
+.xxl {
+    width: calc(240 * var(--object-size-unit));
+}
+
+.xxxl {
+    width: calc(270 * var(--object-size-unit));
+}
+
+.xxxxl {
+    width: calc(300 * var(--object-size-unit));
+}
+
+.full {
+    width: 100%;
+}
+
+.half {
+    width: 50%;
+}
+
+.square {
+    aspect-ratio: 1 / 1;
+}
+
+.v-rect {
+    aspect-ratio: 1 / 2;
 }
 
 /* POSITION CLASSES */
 
+.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.bottom-right {
+    top: 100%;
+    left: 100%;
+    transform: translate(-100%, -100%);
+}
+
 /* GROUPS */
+
+.hidden-container {
+    display: none;
+}
 
 /* ABSTRACT COMPONENTS */
 
@@ -37,15 +110,50 @@
 
 /* COMPONENTS */
 
-.menu-button {
-    position: fixed;
-    top: 100%;
-    left: 100%;
-    transform: translate(-100%, -100%);
+.svg {
+    filter: invert(30%) sepia(85%) saturate(3000%) hue-rotate(200deg);
+}
+
+.form-input {
+    border: var(--object-size-unit) solid black;
+    border-radius: 5px 5px 5px 5px;
 }
 
 .card {
+    width: calc(30 * var(--container-size-unit));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: var(--object-size-unit) solid black;
+    border-radius: calc(5 * var(--object-size-unit));
+    padding: calc(10 * var(--object-size-unit));
+}
 
+.card-title {
+    text-align: center;
+    font-size: var(--font-big);
+    font-weight: bold;
+}
+
+.card-body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: center;
+    font-size: var(--font-medium);
+}
+
+.form-element {
+    display: flex;
+    align-items: center;
+    margin: calc(5 * var(--object-size-unit)) 0px calc(5 * var(--object-size-unit)) 0px;
+}
+
+.form-element * {
+    width: 50%;
+    margin: calc(3 * var(--object-size-unit));
 }
 
 .modal {
