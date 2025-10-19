@@ -1,3 +1,5 @@
+import { Interface } from "/website/modules/abstractive.js";
+
 export class Factory {
 
     // IMPLEMENT: in future versions of the application,
@@ -37,8 +39,10 @@ export class Factory {
         return object;
     }
 
-    static toJSON(object) {
-        return JSON.parse(JSON.stringify(object));
-    }
+}
+
+export class Serializable extends Interface {
+
+    toJSON() { }
 
 }

@@ -1,6 +1,6 @@
 import { default as reactor } from "/website/modules/reactive.js";
 import { default as HTTPRequest } from "/website/modules/http.js";
-import { Factory } from "/website/modules/factory.js";
+import { Factory } from "/website/modules/reflective.js";
 import { Account } from "/website/modules/entities.js";
 import { DaoInterface, ServiceInterface, ControllerInterface } from "/website/modules/mvc.js";
 
@@ -22,7 +22,7 @@ class AccountsDao extends DaoInterface {
     }
 
     create(account) {
-        HTTPRequest.post("accounts", account);
+        HTTPRequest.post("accounts", account.toJSON());
     }
 
     // given the current state of the application, there's no need to decouple accounts from account_holders
@@ -42,7 +42,7 @@ class AccountsDao extends DaoInterface {
 
     // IMPLEMENT: handles both HTTP put and patch requests (overload)
     update(account) {
-        HTTPRequest.put("accounts", account);
+        HTTPRequest.put("accounts", account.toJSON());
     }
 
     delete(id) {
@@ -132,7 +132,10 @@ class AccountsController extends ControllerInterface {
         // the event will be registered directly in the constructor of ChangeDetection,
         // for proper incapsulation
         reactor.registerEvent("render_accounts");
-        this.#removeCallback = (id) => this.remove(id);
+        reactor.registerEvent("render_transactions");
+        this.#removeButtonCallback = (id) => this.remove(id);
+        // IMPLEMENT: should redirect to transactions page and show associated transactions
+        this.#transactionButtonCallback = (iban) => {};
     }
 
     static get instance() {
@@ -143,15 +146,22 @@ class AccountsController extends ControllerInterface {
     #_accountsService = AccountsService.instance;
     #_accountsView = AccountsView.instance;
 
-    #removeCallback;
+    #removeButtonCallback;
+    #transactionButtonCallback;
 
     save(account) {
         this.#_accountsService.put(account);
 
         reactor.dispatchEvent(
             "render_accounts",
-            this.#_accountsView.newAccountNode(account, this.#removeCallback)
+            this.#_accountsView.newAccountNode(account, this.#removeButtonCallback)
         );
+
+        reactor.dispatchEvent(
+            "render_transactions",
+            // IMPLEMENT
+            () => {}
+        )
     }
 
     remove(id) {
@@ -162,8 +172,14 @@ class AccountsController extends ControllerInterface {
     find(id) {
         reactor.dispatchEvent(
             "render_accounts",
-            this.#_accountsView.newAccountNodeList(this.#_accountsService.get(id), this.#removeCallback)
+            this.#_accountsView.newAccountNodeList(this.#_accountsService.get(id), this.#removeButtonCallback)
         );
+
+        reactor.dispatchEvent(
+            "render_transactions",
+            // IMPLEMENT
+            () => {}
+        )
     }
 
     // IMPLEMENT: filter by what? by AccountHolder?
@@ -188,7 +204,7 @@ class AccountsView {
         return AccountsView.#_instance;
     }
 
-    #genericAccountNode(dataId, col1Content, col2Content, col3Content, col4Content) {
+    #genericAccountNode(dataId, col1Content, col2Content, col3Content, col4Content, col5Content) {
         let row = document.createElement("div");
         row.classList.add("row");
         if(dataId) row.dataset.id = dataId;
@@ -217,6 +233,12 @@ class AccountsView {
         col4.appendChild(col4Content) : 
         col4.textContent = col4Content;
 
+        let col5 = document.createElement("div")
+        col5.classList.add("col-3");
+        col5Content instanceof HTMLElement ? 
+        col5.appendChild(col5Content) : 
+        col5.textContent = col5Content;
+
         row.appendChild(col1);
         row.appendChild(col2);
         row.appendChild(col3);
@@ -225,23 +247,30 @@ class AccountsView {
         return row;
     }
 
-    newAccountNode(account, buttonCallback) {
-        let button = document.createElement("button");
-        button.textContent = "ELIMINA"
-        button.addEventListener("click", () => buttonCallback(account.id));
+    newAccountNode(account, removeButtonCallback, transactionButtonCallback) {
+        console.log(account)
+
+        let removeButton = document.createElement("button");
+        removeButton.textContent = "ELIMINA";
+        removeButton.addEventListener("click", () => removeButtonCallback(account.id));
+
+        let transactionButton = document.createElement("button")
+        transactionButton.textContent = "VISUALIZZA TRANSAZIONI";
+        transactionButton.addEventListener("click", () => transactionButtonCallback(account.iban));
 
         return this.#genericAccountNode(
             account.id,
-            account.accountHolder.firstName,
-            account.accountHolder.lastName,
-            account.accountHolder.dateOfBirth,
-            button
+            account.accountHolder.first_name,
+            account.accountHolder.last_name,
+            account.accountHolder.date_of_birth,
+            removeButton,
+            transactionButton
         );
     }
 
-    newAccountNodeList(accounts, buttonCallback) {
-        let nodes = new Array(this.#genericAccountNode("", "NOME", "COGNOME", "DATA DI NASCITA", ""));
-        Object.values(accounts).forEach((account) => nodes.push(this.newAccountNode(account, buttonCallback)));
+    newAccountNodeList(accounts, removeButtonCallback, transactionButtonCallback) {
+        let nodes = new Array(this.#genericAccountNode("", "NOME", "COGNOME", "DATA DI NASCITA", "", ""));
+        Object.values(accounts).forEach((account) => nodes.push(this.newAccountNode(account, removeButtonCallback, transactionButtonCallback)));
         return nodes;
     }
 

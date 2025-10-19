@@ -25,21 +25,40 @@ export class Interface {
     }
 
     #isImplemented() {
-        return this.#abstractMethodNames.every((methodName) => this.getAbstractMethodNames().includes(methodName));
+        return this.#abstractMethodNames.every((methodName) => this.getAllMethodNames().includes(methodName));
     }
 
     #registerAbstractMethod(abstractMethod) {
         this.#abstractMethodNames.push(abstractMethod);
     }
 
-    getAbstractMethodNames() {
-        return Object.getOwnPropertyNames(this.prototype)
-               .filter((propertyName) => propertyName !== "constructor" && typeof this.prototype[propertyName] === 'function');
+    getMethodNames() {
+        return Object.getOwnPropertyNames(this.prototype).filter((propertyName) => {
+            const descriptor = Object.getOwnPropertyDescriptor(this.prototype, propertyName);
+            return propertyName !== "constructor" && 
+                   !(descriptor.get || descriptor.set) && 
+                   typeof descriptor.value === 'function';
+        });
+    }
+
+    getAllMethodNames() {
+        let proto = Object.getPrototypeOf(this);
+        const methods = [];
+        while(proto && !(proto === this.getInterface().prototype)) {
+            methods.push(...Object.getOwnPropertyNames(proto).filter((propertyName) => {
+                const descriptor = Object.getOwnPropertyDescriptor(proto, propertyName);
+                return propertyName !== "constructor" && 
+                    !(descriptor.get || descriptor.set) && 
+                    typeof descriptor.value === 'function';
+            }));
+            proto = Object.getPrototypeOf(proto);
+        }
+        return methods;
     }
 
     constructor() {
         this.prototype = Object.getPrototypeOf(this);
-        this.getInterface().prototype["getAbstractMethodNames"].bind(this.getInterface()).call().forEach((method) => this.#registerAbstractMethod(method));
+        this.getInterface().prototype["getMethodNames"].bind(this.getInterface()).call().forEach((method) => this.#registerAbstractMethod(method));
         if(!this.#isImplemented()) throw new SyntaxError("error: all abstract methods must be implemented")
     }
 

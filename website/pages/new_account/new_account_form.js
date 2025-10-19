@@ -13,7 +13,12 @@ export class AccountForm extends FormInterface {
 
     async onSubmit(formData) {
         const model = new Account(
+            formData.get("account-id"),
+            formData.get("iban"),
+            formData.get("account-number"),
+            formData.get("branch"),
             new AccountHolder(
+                formData.get("account-holder-id"),
                 formData.get("first-name"),
                 formData.get("last-name"),
                 formData.get("date-of-birth")
