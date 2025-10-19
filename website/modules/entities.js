@@ -52,7 +52,7 @@ class Entity extends Serializable {
         let prototype = Object.getPrototypeOf(this);
 
         const getterNames = [];
-        while(prototype && prototype !== Object.prototype) {
+        while(prototype && prototype !== Entity.prototype) {
             Object.getOwnPropertyNames(prototype).forEach((name) => {
                 const descriptor = Object.getOwnPropertyDescriptor(prototype, name);
                 if(descriptor && descriptor.get) getterNames.push(name);
