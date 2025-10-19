@@ -1,6 +1,7 @@
 import { default as reactor } from "/website/modules/reactive.js";
 import { default as HTTPRequest } from "/website/modules/http.js";
-import { Account, AccountHolder } from "/website/modules/entities.js";
+import { Factory } from "/website/modules/factory.js";
+import { Account } from "/website/modules/entities.js";
 import { DaoInterface, ServiceInterface, ControllerInterface } from "/website/modules/mvc.js";
 
 // sends HTTP requests
@@ -24,6 +25,16 @@ class AccountsDao extends DaoInterface {
         HTTPRequest.post("accounts", account);
     }
 
+    // given the current state of the application, there's no need to decouple accounts from account_holders
+    /* 
+        select
+            ac.*,
+            ah.*
+        from
+            accounts ac
+            inner join account_holders ah
+            on ac.account_holder = ah.id;
+    */
     // handles both readAll() and readById() (overload)
     read(id) {
         return id === undefined ? HTTPRequest.get("accounts") : HTTPRequest.get("accounts", id)[id];
@@ -63,10 +74,10 @@ class AccountsService extends ServiceInterface {
 
     #load() {
         // IMPLEMENT: assign objects using reflection from the reflective.js module
+        // eager loading: all throughout the application,
+        // accounts are always paired with their holders
         Object.values(this.#_accountsDao.read()).forEach(account => {
-            account = Object.assign(new Account(), account);
-            account.accountHolder = Object.assign(new AccountHolder(), account.accountHolder);
-            this.#_accounts[account.id] = account;
+            this.#_accounts[account.id] = Factory.fromJSON(Account, account);
         });
     }
 
