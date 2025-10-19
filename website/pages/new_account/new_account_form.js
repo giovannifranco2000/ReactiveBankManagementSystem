@@ -1,6 +1,6 @@
 import { FormInterface } from "/website/modules/forms.js";
 import { Account, AccountHolder } from "/website/modules/entities.js";
-import { default as accountsController } from "/website/pages/accounts/accountsmvc.js";
+import { default as accountsController } from "/website/modules/accountsmvc.js";
 
 // TEMPLATE METHOD ANTI-PATTERN (ASYNCHRONOUS) (see forms.js)
 // PROTOTYPE REFLECTION (see abstractive.js)

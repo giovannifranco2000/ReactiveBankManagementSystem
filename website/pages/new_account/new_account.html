@@ -3,26 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accounts</title>
+    <title>Aggiungi un conto</title>
 
     <!-- usato solo per classi strutturali, raggruppamenti e media queries -->
-    <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> -->
 
     <link rel="stylesheet" href="/css_framework/template.css">
     <script src="/css_framework/script.js"></script>
 
-    <script type="module" src="accounts.js"></script>
+    <script type="module" src="new_account.js"></script>
+
 </head>
 <body>
-    
     <header>
 
     </header>
 
     <main>
-
-        <div class="container-fluid account-list"></div>
-
+        <form class="account-form">
+            <label for="first-name"></label>
+            <input type="text" class="form-input" name="first-name" placeholder="First name" required>
+            <label for="last-name"></label>
+            <input type="text" class="form-input" name="last-name" placeholder="Last name" required>
+            <label for="date-of-birth"></label>
+            <input type="date" class="form-input" name="date-of-birth" required>
+            <button type="submit">INVIA</button>
+        </form>
     </main>
 
     <footer>

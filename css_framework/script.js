@@ -48,4 +48,28 @@ window.addEventListener("DOMContentLoaded", () => {
 
     });
 
+    document.querySelectorAll(`[f-action="show-on-hover"]`).forEach((element) => {
+
+        let id = element.getAttribute("f-target");
+        let target = document.getElementById(id);
+        target.style.display = "none";
+
+        element.addEventListener("mouseenter", (event) => {
+            target.style.display = "block";
+        });
+
+        target.addEventListener("mouseenter", (event) => {
+            target.style.display = "block";
+        });
+
+        element.addEventListener("mouseleave", (event) => {
+            target.style.display = "none";
+        });
+
+        target.addEventListener("mouseleave", (event) => {
+            target.style.display = "none";
+        });
+
+    });
+
 });

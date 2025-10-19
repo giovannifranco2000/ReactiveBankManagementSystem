@@ -6,13 +6,13 @@
     /* dinamically set through js: (1vmax / 1vmin) + (1vmin / 1vmax) */
     --self-contained-size-unit: 10px;
 
-    --width-reliant-size-unit: 1vw;
+    --width-reliant-size-unit: calc(1vw + 1px);
 
-    --height-reliant-size-unit: 1vh;
+    --height-reliant-size-unit: calc(1vh + 1px);
 
-    --font-small: calc(5 * var(--self-contained-size-unit));
-    --font-medium: calc(10 * var(--self-contained-size-unit));
-    --font-big: calc(20 * var(--self-contained-size-unit));
+    --font-small: calc(1 * var(--width-reliant-size-unit));
+    --font-medium: calc(2 * var(--width-reliant-size-unit));
+    --font-big: calc(3 * var(--width-reliant-size-unit));
 }
 
 :root, :root * {
@@ -27,6 +27,17 @@
 
 form {
     display: contents;
+}
+
+button {
+    background: none;
+	border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
 }
 
 /* DIMENSION AND SHAPE CLASSES */
@@ -89,7 +100,19 @@ form {
 
 /* POSITION CLASSES */
 
-.fixed {
+.h-central-alignment {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.v-central-alignment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.fixed-group {
     position: fixed;
     top: 0;
     left: 0;
@@ -116,26 +139,33 @@ form {
 /* COMPONENTS */
 
 .svg {
+    /* convert color to filter: https://angel-rs.github.io/css-color-filter-generator/ */
     filter: invert(30%) sepia(85%) saturate(3000%) hue-rotate(200deg);
 }
 
-.form-input {
-    border: var(--self-contained-size-unit) solid black;
-    border-radius: 5px 5px 5px 5px;
+.menu {
+    background-color: black;
+    border-radius: calc(0.5 * var(--width-reliant-size-unit));
+    font-size: var(--font-small);
+    color: white;
+}
+
+.menu > * {
+    color: inherit;
+    display: block;
 }
 
 .card {
-    width: calc(30 * var(--width-reliant-size-unit));
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: var(--self-contained-size-unit) solid black;
-    border-radius: calc(5 * var(--self-contained-size-unit));
-    padding: calc(10 * var(--self-contained-size-unit));
+    border: calc(0.2 * var(--width-reliant-size-unit)) solid black;
+    border-radius: calc(3 * var(--width-reliant-size-unit));
+    padding: 0 calc(1 * var(--width-reliant-size-unit)) 0 calc(1 * var(--width-reliant-size-unit));
 }
 
-.card-title {
+.card-header {
     text-align: center;
     font-size: var(--font-big);
     font-weight: bold;
@@ -150,17 +180,49 @@ form {
     font-size: var(--font-medium);
 }
 
-.form-element {
+.card-footer {
+    width: 100%;
     display: flex;
-    align-items: center;
-    margin: calc(5 * var(--self-contained-size-unit)) 0px calc(5 * var(--self-contained-size-unit)) 0px;
+    justify-content: space-around;
+}
+
+.form-input {
+    border: calc(0.2 * var(--width-reliant-size-unit)) solid black;
+    border-radius: 5px 5px 5px 5px;
+}
+
+.form-element {
+    margin: calc(0.5 * var(--width-reliant-size-unit)) 0px calc(0.5 * var(--width-reliant-size-unit)) 0px;
 }
 
 .form-element * {
     width: 50%;
-    margin: calc(3 * var(--self-contained-size-unit));
+    margin: calc(0.5 * var(--width-reliant-size-unit));
+}
+
+.button {
+    border: calc(0.2 * var(--width-reliant-size-unit)) solid black;
+    border-radius: calc(3 * var(--width-reliant-size-unit));
+	padding: calc(0.5 * var(--width-reliant-size-unit));
+	font-size: var(--font-medium);
 }
 
 .modal {
     
+}
+
+@media only screen and (max-width: 768px) {
+
+    .central-alignment {
+        flex-direction: column;
+    }
+
+    .card {
+        padding: calc(1 * var(--height-reliant-size-unit)) 0 calc(1 * var(--height-reliant-size-unit)) 0;
+    }
+
+    .form-element {
+        margin: calc(2 * var(--width-reliant-size-unit)) 0px calc(2 * var(--width-reliant-size-unit)) 0px;
+    }
+
 }

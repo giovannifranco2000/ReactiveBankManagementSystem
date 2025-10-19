@@ -1,14 +1,16 @@
 import { default as reactor } from "/website/modules/reactive.js";
 import { default as HTTPRequest } from "/website/modules/http.js";
 import { Account, AccountHolder } from "/website/modules/entities.js";
+import { DaoInterface, ServiceInterface, ControllerInterface } from "/website/modules/mvc.js";
 
 // sends HTTP requests
-class AccountsDao {
+class AccountsDao extends DaoInterface {
 
     // SINGLETON
     static #_instance;
 
     constructor() {
+        super();
         if(AccountsDao.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
         AccountsDao.#_instance = this;
     }
@@ -39,12 +41,13 @@ class AccountsDao {
 }
 
 // converts objects and implements business logic
-class AccountsService {
+class AccountsService extends ServiceInterface {
 
     // SINGLETON
     static #_instance;
 
     constructor() {
+        super();
         if(AccountsService.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
         AccountsService.#_instance = this;
     }
@@ -105,12 +108,13 @@ class AccountsService {
 
 // handles data through services, prompts views for changes, dispatches events to change detection
 // DEBUG: error handling?
-class AccountsController {
+class AccountsController extends ControllerInterface {
 
     // SINGLETON
     static #_instance;
 
     constructor() {
+        super();
         if(AccountsController.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
         AccountsController.#_instance = this;
         this.#removeCallback = (id) => this.remove(id);
@@ -222,7 +226,6 @@ class AccountsView {
 
     newAccountNodeList(accounts, buttonCallback) {
         let nodes = new Array(this.#genericAccountNode("", "NOME", "COGNOME", "DATA DI NASCITA", ""));
-
         Object.values(accounts).forEach((account) => nodes.push(this.newAccountNode(account, buttonCallback)));
         return nodes;
     }
