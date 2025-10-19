@@ -117,6 +117,10 @@ class AccountsController extends ControllerInterface {
         super();
         if(AccountsController.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
         AccountsController.#_instance = this;
+        // IMPLEMENT: when I turn the website into a Single Page Application,
+        // the event will be registered directly in the constructor of ChangeDetection,
+        // for proper incapsulation
+        reactor.registerEvent("render_accounts");
         this.#removeCallback = (id) => this.remove(id);
     }
 
