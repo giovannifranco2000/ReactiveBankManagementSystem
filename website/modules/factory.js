@@ -18,6 +18,8 @@ export class Factory {
     } */
 
     static fromJSON(type, json) {
+        if(json === null || Array.isArray(json) || typeof json !== "object") return json;
+
         const object = Reflect.construct(type, []);
         const nestedTypes = type.NESTED_TYPES || {};
         for(const key of Object.keys(json)) {
@@ -25,8 +27,11 @@ export class Factory {
                 // the name of the key in value types must match the names of getters/setters,
                 // not that of the property
                 const nestedType = nestedTypes[key];
+                const value = json[key];
+                if(Array.isArray(value))
+                    for(const index in value) value[index] = nestedType ? this.fromJSON(nestedType, value[index]) : value[index];
                 // object hydration:
-                object[key] = nestedType ? this.fromJSON(nestedType, json[key]) : json[key];
+                object[key] = nestedType ? this.fromJSON(nestedType, value) : value;
             }
         }
         return object;
