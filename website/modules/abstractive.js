@@ -7,58 +7,48 @@
 // any class that extends Interface will be an interface, and its methods are all going to be considered abstract
 // subclasses of interfaces will be checked at runtime to have implemented all the methods defined in the interface they extend
 
-// IMPLEMENT: find a way to distinguish between abstract methods and concrete methods (abstract class)
-
 export class Interface {
 
-    #abstractMethodNames = [];
-    prototype;
-
-    get abstractMethodNames() {
-        return this.#abstractMethodNames;
-    }
-
-    getInterface() {
-        let currentConstructor = this.constructor;
-        while(Object.getPrototypeOf(currentConstructor) !== Interface) currentConstructor = Object.getPrototypeOf(currentConstructor);
-        return currentConstructor;
-    }
-
-    #isImplemented() {
-        return this.#abstractMethodNames.every((methodName) => this.getAllMethodNames().includes(methodName));
-    }
-
-    #registerAbstractMethod(abstractMethod) {
-        this.#abstractMethodNames.push(abstractMethod);
-    }
-
-    getMethodNames() {
-        return Object.getOwnPropertyNames(this.prototype).filter((propertyName) => {
-            const descriptor = Object.getOwnPropertyDescriptor(this.prototype, propertyName);
+    static getMethodNames(prototype) {
+        return Object.getOwnPropertyNames(prototype).filter((propertyName) => {
+            const descriptor = Object.getOwnPropertyDescriptor(prototype, propertyName);
             return propertyName !== "constructor" && 
                    !(descriptor.get || descriptor.set) && 
                    typeof descriptor.value === 'function';
         });
     }
 
-    getAllMethodNames() {
-        let proto = Object.getPrototypeOf(this);
+    static getAllMethodNames(prototype) {
         const methods = [];
-        while(proto && !(proto === this.getInterface().prototype)) {
-            methods.push(...Object.getOwnPropertyNames(proto).filter((propertyName) => {
-                const descriptor = Object.getOwnPropertyDescriptor(proto, propertyName);
-                return propertyName !== "constructor" && 
-                    !(descriptor.get || descriptor.set) && 
-                    typeof descriptor.value === 'function';
-            }));
-            proto = Object.getPrototypeOf(proto);
+        while(prototype && !(prototype === prototype.getInterfaceConstructor().prototype)) {
+            methods.push(...Interface.getMethodNames(prototype));
+            prototype = Object.getPrototypeOf(prototype);
         }
         return methods;
     }
 
+    #abstractMethodNames = [];
+
+    get abstractMethodNames() {
+        return this.#abstractMethodNames;
+    }
+
+    getInterfaceConstructor() {
+        let currentConstructor = this.constructor;
+        while(Object.getPrototypeOf(currentConstructor) !== Interface) currentConstructor = Object.getPrototypeOf(currentConstructor);
+        return currentConstructor;
+    }
+
+    #isImplemented() {
+        return this.#abstractMethodNames.every((methodName) => Interface.getAllMethodNames(Object.getPrototypeOf(this)).includes(methodName));
+    }
+
+    #registerAbstractMethod(abstractMethod) {
+        this.#abstractMethodNames.push(abstractMethod);
+    }
+
     constructor() {
-        this.prototype = Object.getPrototypeOf(this);
-        this.getInterface().prototype["getMethodNames"].bind(this.getInterface()).call().forEach((method) => this.#registerAbstractMethod(method));
+        this.getInterfaceConstructor()["getMethodNames"].call(this, Object.getPrototypeOf(this)).forEach((method) => this.#registerAbstractMethod(method));
         if(!this.#isImplemented()) throw new SyntaxError("error: all abstract methods must be implemented")
     }
 

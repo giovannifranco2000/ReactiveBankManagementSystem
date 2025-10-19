@@ -17,7 +17,7 @@ export class FormInterface extends Interface {
     constructor(formNodeCallback) {
         super();
         this.form = formNodeCallback() ?? document.querySelector("form");
-        this.getInterface().prototype[ON_SUBMIT].bind(this).call();
+        this.getInterfaceConstructor().prototype[ON_SUBMIT].bind(this).call();
     }
 
     // allows the method not to be recognized as abstract by the interface
