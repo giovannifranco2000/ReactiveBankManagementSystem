@@ -22,7 +22,7 @@ class AccountsDao extends DaoInterface {
     }
 
     create(account) {
-        HTTPRequest.post("accounts", account.toJSON());
+        account.id = HTTPRequest.post("accounts", account.toJSON());
     }
 
     // given the current state of the application, there's no need to decouple accounts from account_holders
