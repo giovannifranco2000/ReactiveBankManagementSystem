@@ -26,7 +26,6 @@ class HTTPRequest {
     post(table, object) {
         if(object === null) throw new Error("server error: invalid object");
         object.id = ++HTTPRequest.id;
-        console.log(object)
         let queryResult = JSON.parse(localStorage.getItem(table) ?? "{}");
         // already exists: cannot insert
         if(queryResult[object.id]) throw new Error("database error: insert error");

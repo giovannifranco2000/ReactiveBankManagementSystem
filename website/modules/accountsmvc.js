@@ -248,8 +248,6 @@ class AccountsView {
     }
 
     newAccountNode(account, removeButtonCallback, transactionButtonCallback) {
-        console.log(account)
-
         let removeButton = document.createElement("button");
         removeButton.textContent = "ELIMINA";
         removeButton.addEventListener("click", () => removeButtonCallback(account.id));
@@ -260,9 +258,9 @@ class AccountsView {
 
         return this.#genericAccountNode(
             account.id,
-            account.accountHolder.first_name,
-            account.accountHolder.last_name,
-            account.accountHolder.date_of_birth,
+            account.account_holder.first_name,
+            account.account_holder.last_name,
+            account.account_holder.date_of_birth,
             removeButton,
             transactionButton
         );
