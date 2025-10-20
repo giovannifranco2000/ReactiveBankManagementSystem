@@ -22,7 +22,7 @@ class AccountsDao extends DaoInterface {
     }
 
     create(account) {
-        account.id = HTTPRequest.post("accounts", account.toJSON());
+        account.id = HTTPRequest.post("/accounts", account.toJSON());
     }
 
     // given the current state of the application, there's no need to decouple accounts from account_holders
@@ -37,16 +37,16 @@ class AccountsDao extends DaoInterface {
     */
     // handles both readAll() and readById() (overload)
     read(id) {
-        return id === undefined ? HTTPRequest.get("accounts") : HTTPRequest.get("accounts", id)[id];
+        return id === undefined ? HTTPRequest.get("/accounts") : HTTPRequest.get("/accounts", id)[id];
     }
 
     // IMPLEMENT: handles both HTTP put and patch requests (overload)
     update(account) {
-        HTTPRequest.put("accounts", account.toJSON());
+        HTTPRequest.put("/accounts", account.toJSON());
     }
 
     delete(id) {
-        HTTPRequest.delete("accounts", id);
+        HTTPRequest.delete("/accounts", id);
     }
 
 }

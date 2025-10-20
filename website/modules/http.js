@@ -13,27 +13,36 @@ class HTTPRequest {
 
     #_database = new Database();
 
-    get(table, id) {
-        if(id === null || id <= 0) throw new Error("server error: invalid id");
-        return this.#_database.select(table, id);
+    // IMPLEMENT: in future solutions, there needs to be a url mapping system
+    // in the simulated server
+    #tableFromUrl(url) {
+        if(url === "/accounts") return "accounts";
+        else if(url === "/transactions") return "transactions";
+        // IMPLEMENT: the simulated server should return an HttpResponse with status code 404
+        else throw new SyntaxError("error: page not found")
     }
 
-    post(table, object) {
+    get(url, id) {
+        if(id === null || id <= 0) throw new Error("server error: invalid id");
+        return this.#_database.select(this.#tableFromUrl(url), id);
+    }
+
+    post(url, object) {
         if(object === null) throw new Error("server error: invalid object");
         // database errors propagate
-        return this.#_database.insert(table, object);
+        return this.#_database.insert(this.#tableFromUrl(url), object);
     }
 
-    put(table, object) {
+    put(url, object) {
         if(object === null || object.id === null || object.id <= 0) throw new Error("server error: invalid object");
         // database errors propagate
-        this.#_database.update(table, object);
+        this.#_database.update(this.#tableFromUrl(url), object);
     }
 
-    delete(table, id) {
+    delete(url, id) {
         // just for optimization purposes: not needed
         if(id === null || id <= 0) throw new Error("server error: invalid id");
-        this.#_database.delete(table, id);
+        this.#_database.delete(this.#tableFromUrl(url), id);
     }
 
     // IMPLEMENT: like put, but single fields

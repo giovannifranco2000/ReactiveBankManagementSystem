@@ -1,3 +1,5 @@
+import { default as sqlParser } from "/website/modules/sqlparser.js";
+
 // each table in the database is treated like a JSON object.
 // each object MUST have a primary key called "id".
 

@@ -73,7 +73,6 @@ class Entity extends Serializable {
         return json;
 
     }
-
 }
 
 export class AccountHolder extends Entity {
@@ -193,7 +192,6 @@ export class AccountHolder extends Entity {
     set cf(cf) {
         this.#_cf = cf;
     }
-
 }
 
 export class Transaction extends Entity {
@@ -252,7 +250,6 @@ export class Transaction extends Entity {
         if(!Object.values(TransactionStatus).includes(status)) throw new TypeError("error: only TransactionStatus enum values accepted")
         this.#_status = status;
     }
-
 }
 
 export class Account extends Entity {
