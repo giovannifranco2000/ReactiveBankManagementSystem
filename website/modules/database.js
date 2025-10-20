@@ -29,14 +29,23 @@ export class Database {
         return this.#_primaryKeys[table];
     }
 
-    update(table) {
+    update(table, object) {
         // lazy loading: the table is requested only when necessary, and will continue being available ever since
         if(!this.#_schema[table]) this.#_schema[table] = JSON.parse(localStorage.getItem(table) ?? "{}");
+        // does not exist: cannot update
+        if(!this.#_schema[table][object.id]) throw new Error("database error: update error");
+        this.#_schema[table][object.id] = object;
+        localStorage.setItem(table, JSON.stringify(this.#_schema[table]));
     }
 
-    delete(table) {
+    delete(table, id) {
         // lazy loading: the table is requested only when necessary, and will continue being available ever since
         if(!this.#_schema[table]) this.#_schema[table] = JSON.parse(localStorage.getItem(table) ?? "{}");
+        // just for optimization purposes: not needed
+        if(this.#_schema[table][id]) {
+            delete this.#_schema[table][id];
+            localStorage.setItem(table, JSON.stringify(this.#_schema[table]));
+        }
     }
 
 }
