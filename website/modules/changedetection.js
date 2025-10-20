@@ -87,8 +87,8 @@ class ChangeDetection {
                 virtualDom.empty();
                 for(let node of arg) virtualDom.appendChild(node);
 
-            } else console.warn("illegal event call: illegal argument type, no action expected\n" + event) 
-        
+            } else console.warn("illegal event call: illegal argument type, no action expected\n" + event)
+
         })
 
     }

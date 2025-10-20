@@ -18,13 +18,13 @@ export class Database {
         if(!this.#_primaryKeys[table])
             this.#_primaryKeys[table] = (Object.keys(this.#_schema[table]).length <= 0) ? 0 : 
                                         Object.keys(this.#_schema[table]).reduce((a, b) => a > b ? a : b);
+        // custom ids are accepted in inserts
         if(object.id) {
             // already exists: cannot insert
             if(this.#_schema[table][object.id]) throw new Error("database error: insert error");
-            // custom ids are accepted in inserts
-            this.#_schema[table][object.id] = object;
             if(object.id > this.#_primaryKeys[table]) this.#_primaryKeys[table] = object.id;
-        } else this.#_schema[table][++this.#_primaryKeys[table]] = object; // auto_increment
+        } else object.id = ++this.#_primaryKeys[table]; // auto_increment
+        this.#_schema[table][object.id] = object;
         localStorage.setItem(table, JSON.stringify(this.#_schema[table]));
         return this.#_primaryKeys[table];
     }
