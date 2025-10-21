@@ -1,6 +1,6 @@
-import { FormInterface } from "/website/modules/forms.js";
-import { Account, AccountHolder } from "/website/modules/entities.js";
-import { default as accountsController } from "/website/modules/accountsmvc.js";
+import { FormInterface } from "/modules/js_framework/forms.js";
+import { Account, AccountHolder } from "/modules/client/entities.js";
+import { default as accountsController } from "/modules/client/accountsmvc.js";
 
 // TEMPLATE METHOD ANTI-PATTERN (ASYNCHRONOUS) (see forms.js)
 // PROTOTYPE REFLECTION (see abstractive.js)
@@ -84,7 +84,7 @@ export class AccountForm extends FormInterface {
 } */
 
 // PROMISE-BASED DEPENDENCY INJECTION (see forms.js)
-// import { Form } from "/website/modules/forms.js";
+// import { Form } from "/modules/forms.js";
 /* export class AccountForm extends Form {
 
     constructor() {
@@ -115,7 +115,7 @@ export class AccountForm extends FormInterface {
 } */
 
 // CALLBACK-BASED DEPENDENCY INJECTION (see forms.js)
-// import { Form } from "/website/modules/forms.js";
+// import { Form } from "/modules/forms.js";
 /* export class AccountForm extends Form {
 
     constructor() {

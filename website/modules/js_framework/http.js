@@ -1,4 +1,4 @@
-import { Database } from "/website/modules/database.js";
+import { Database } from "/modules/server/database.js";
 
 // IMPLEMENT: this class should only send http requests to a simulated server.
 // at the moment, it serves as the server and backend at the same time.
@@ -9,6 +9,7 @@ import { Database } from "/website/modules/database.js";
 // e.g. the backend should provide a JSON representing an account
 // comprehensive of AccountHolder data, but not transactions (lazy loading)
 
+// expects to handle DTOs
 class HTTPRequest {
 
     #_database = new Database();
@@ -16,8 +17,8 @@ class HTTPRequest {
     // IMPLEMENT: in future solutions, there needs to be a url mapping system
     // in the simulated server
     #tableFromUrl(url) {
-        if(url === "/accounts") return "accounts";
-        else if(url === "/transactions") return "transactions";
+        if(url === "/api/accounts") return "accounts";
+        else if(url === "/api/transactions") return "transactions";
         // IMPLEMENT: the simulated server should return an HttpResponse with status code 404
         else throw new SyntaxError("error: page not found")
     }

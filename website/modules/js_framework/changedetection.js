@@ -1,4 +1,4 @@
-import { default as reactor } from "/website/modules/reactive.js";
+import { default as reactor } from "./reactive.js";
 
 // IMPLEMENT: when I turn the website into a Single Page Application,
 // the virtual DOM will play a pivotal role. At the moment, it stops existing every time

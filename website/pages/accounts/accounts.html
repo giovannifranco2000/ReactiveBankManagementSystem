@@ -1,50 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accounts</title>
+<html lang="it">
 
-    <!-- usato solo per classi strutturali, raggruppamenti e media queries -->
-    <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <head>
 
-    <link rel="stylesheet" href="/css_framework/template.css">
-    <script src="/css_framework/script.js"></script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Giovanni Franco">
 
-    <script type="module" src="accounts.js"></script>
-</head>
-<body>
-    
-    <header>
+        <title>Conti</title>
 
-    </header>
+        <link rel="stylesheet" href="/modules/css_framework/template.css">
+        <script src="/modules/css_framework/script.js"></script>
 
-    <main>
+        <script type="module" src="accounts.js"></script>
 
-        <div class="container-fluid account-list"></div>
+    </head>
 
-    </main>
+    <body>
+        
+        <header>
 
-    <footer>
-        <div class="fixed-group bottom-right xxxs square">
-            <div id="hidden-menu" class="menu v-central-alignment">
-                <a href="#">Homepage</a>
-                <a href="/website/pages/new_account/new_account.html">New Account</a>
-                <a href="/website/pages/accounts/accounts.html">Accounts</a>
-                <a href="/website/pages/transactions/transactions.html">Transactions</a>
+        </header>
+
+        <main>
+            <div class="account-list"></div>
+        </main>
+
+        <footer>
+            <div class="fixed-group bottom-right xxxs square">
+                <div id="hidden-menu" class="menu v-central-alignment">
+                    <a href="/pages/homepage/homepage.html">Homepage</a>
+                    <a href="/pages/new_account/new_account.html">Nuovo conto</a>
+                    <a href="#">Conti</a>
+                    <a href="/pages/transactions/transactions.html">Transazioni</a>
+                </div>
+
+                <picture>
+                    <img 
+                        f-action="show-on-hover"
+                        f-target="hidden-menu"
+                        src="/public/logo.svg"
+                        class="hoverable xxxs square svg"
+                        alt="bank logo"
+                    >
+                </picture>
             </div>
+        </footer>
 
-            <picture>
-                <img 
-                    f-action="show-on-hover"
-                    f-target="hidden-menu"
-                    src="/public/logo.svg"
-                    class="hoverable xxxs square svg"
-                    alt="bank logo"
-                >
-            </picture>
-        </div>
-    </footer>
+    </body>
 
-</body>
 </html>

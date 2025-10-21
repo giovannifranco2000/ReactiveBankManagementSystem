@@ -1,56 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aggiungi un conto</title>
+<html lang="it">
 
-    <!-- usato solo per classi strutturali, raggruppamenti e media queries -->
-    <!-- <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> -->
+    <head>
 
-    <link rel="stylesheet" href="/css_framework/template.css">
-    <script src="/css_framework/script.js"></script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Giovanni Franco">
 
-    <script type="module" src="new_account.js"></script>
+        <title>Nuovo conto</title>
 
-</head>
-<body>
-    <header>
+        <link rel="stylesheet" href="/modules/css_framework/template.css">
+        <script src="/modules/css_framework/script.js"></script>
 
-    </header>
+        <script type="module" src="new_account.js"></script>
 
-    <main>
-        <form class="account-form">
-            <label for="first-name"></label>
-            <input type="text" class="form-input" name="first-name" placeholder="First name" required>
-            <label for="last-name"></label>
-            <input type="text" class="form-input" name="last-name" placeholder="Last name" required>
-            <label for="date-of-birth"></label>
-            <input type="date" class="form-input" name="date-of-birth" required>
-            <button type="submit">INVIA</button>
-        </form>
-    </main>
+    </head>
 
-    <footer>
-        <div class="fixed-group bottom-right xxxs square">
-            <div id="hidden-menu" class="menu v-central-alignment">
-                <a href="#">Homepage</a>
-                <a href="/website/pages/new_account/new_account.html">New Account</a>
-                <a href="/website/pages/accounts/accounts.html">Accounts</a>
-                <a href="/website/pages/transactions/transactions.html">Transactions</a>
+    <body>
+        <header>
+
+        </header>
+
+        <main>
+            <form class="account-form">
+                <label for="first-name"></label>
+                <input type="text" class="form-input" name="first-name" placeholder="First name" required>
+                <label for="last-name"></label>
+                <input type="text" class="form-input" name="last-name" placeholder="Last name" required>
+                <label for="date-of-birth"></label>
+                <input type="date" class="form-input" name="date-of-birth" required>
+                <button type="submit">INVIA</button>
+            </form>
+        </main>
+
+        <footer>
+            <div class="fixed-group bottom-right xxxs square">
+                <div id="hidden-menu" class="menu v-central-alignment">
+                    <a href="/pages/homepage/homepage.html">Homepage</a>
+                    <a href="#">Nuovo conto</a>
+                    <a href="/pages/accounts/accounts.html">Conti</a>
+                    <a href="/pages/transactions/transactions.html">Transazioni</a>
+                </div>
+
+                <picture>
+                    <img
+                        f-action="show-on-hover"
+                        f-target="hidden-menu"
+                        src="/public/logo.svg"
+                        class="hoverable xxxs square svg"
+                        alt="bank logo"
+                    >
+                </picture>
             </div>
+        </footer>
 
-            <picture>
-                <img 
-                    f-action="show-on-hover"
-                    f-target="hidden-menu"
-                    src="/public/logo.svg"
-                    class="hoverable xxxs square svg"
-                    alt="bank logo"
-                >
-            </picture>
-        </div>
-    </footer>
+    </body>
 
-</body>
 </html>

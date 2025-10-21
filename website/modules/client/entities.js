@@ -1,4 +1,4 @@
-import { Serializable } from "/website/modules/reflective.js";
+import { Serializable } from "/modules/js_framework/reflective.js";
 
 // most validity checks will be handled in backend directly.
 // only enums are defined in frontend as well, for user friendly insertion

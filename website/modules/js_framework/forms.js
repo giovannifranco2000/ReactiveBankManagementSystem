@@ -1,4 +1,4 @@
-import { Interface } from "/website/modules/abstractive.js";
+import { Interface } from "./abstractive.js";
 
 // TEMPLATE METHOD ANTI-PATTERN (ASYNCHRONOUS) (https://www.geeksforgeeks.org/system-design/template-method-design-pattern/)
 // PROTOTYPE REFLECTION (see abstractive.js)

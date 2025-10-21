@@ -1,48 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transactions</title>
+<html lang="it">
 
-    <!-- usato solo per classi strutturali, raggruppamenti e media queries -->
-    <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <head>
 
-    <link rel="stylesheet" href="/framework/template.css">
-    <script src="/framework/script.js"></script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Giovanni Franco">
 
-</head>
-<body>
-    
-    <header>
+        <title>Transazioni</title>
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-3 col-sm-4">
-                    <picture>
-                        <img src="/public/logo.svg" class="logo" alt="bank logo">
-                    </picture>
+        <link rel="stylesheet" href="/modules/css_framework/template.css">
+        <script src="/modules/css_framework/script.js"></script>
+
+        <script type="module" src="transactions.js"></script>
+
+    </head>
+
+    <body>
+        
+        <header>
+
+        </header>
+
+        <main>
+
+        </main>
+
+        <footer>
+            <div class="fixed-group bottom-right xxxs square">
+                <div id="hidden-menu" class="menu v-central-alignment">
+                    <a href="/pages/homepage/homepage.html">Homepage</a>
+                    <a href="/pages/new_account/new_account.html">Nuovo conto</a>
+                    <a href="/pages/accounts/accounts.html">Conti</a>
+                    <a href="#">Transazioni</a>
                 </div>
 
-                <div class="col-lg-3 d-sm-none d-lg-block">
-                    <a href="/website/pages/accounts/accounts.html">Accounts</a>
-                </div>
-
-                <div class="col-sm-8 d-lg-none d-sm-block text-end">
-                    <button type="button" class="menu-button"></button>
-                </div>
-
-                <div class="col-lg-3 d-sm-none d-lg-block">
-                    <a href="/website/pages/account_holders/account_holders.html">Account Holders</a>
-                </div>
-
-                <div class="col-lg-3 d-sm-none d-lg-block">
-                    <a href="#">Transactions</a>
-                </div>
+                <picture>
+                    <img 
+                        f-action="show-on-hover"
+                        f-target="hidden-menu"
+                        src="/public/logo.svg"
+                        class="hoverable xxxs square svg"
+                        alt="bank logo"
+                    >
+                </picture>
             </div>
-        </div>
+        </footer>
 
-    </header>
+    </body>
 
-</body>
 </html>

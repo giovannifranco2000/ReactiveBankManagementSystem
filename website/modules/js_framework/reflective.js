@@ -1,4 +1,4 @@
-import { Interface } from "/website/modules/abstractive.js";
+import { Interface } from "./abstractive.js";
 
 export class Factory {
 

@@ -1,91 +1,107 @@
-import { default as reactor } from "/website/modules/reactive.js";
-import { default as HTTPRequest } from "/website/modules/http.js";
-import { Factory } from "/website/modules/reflective.js";
-import { Account } from "/website/modules/entities.js";
-import { DaoInterface, ServiceInterface, ControllerInterface } from "/website/modules/mvc.js";
+import { default as reactor } from "/modules/js_framework/reactive.js";
+import { default as HTTPRequest } from "/modules/js_framework/http.js";
+import { Factory } from "/modules/js_framework/reflective.js";
+import { Transaction } from "/modules/js_framework/entities.js";
+import { DaoInterface, ServiceInterface, ControllerInterface } from "/modules/js_framework/mvc.js";
+import { AccountsService } from "/modules/js_framework/accountsmvc.js";
+
+// IMPLEMENT: CACHE -> already made transaction queries should be handled by cache
+// a cache associates the url of a get/post request to the data received,
+// so that there won't be a need to request data from the database each time the page is refreshed
+// I'll also need a refresh button, to request the database for an updated list of transactions
+// (the database might be manipulated by multiple sources at the same time)
+// #_transactions in TransactionsService will be replaced by the cache
 
 // sends HTTP requests
-class AccountsDao extends DaoInterface {
+class TransactionsDao extends DaoInterface {
 
     // SINGLETON
     static #_instance;
 
     constructor() {
         super();
-        if(AccountsDao.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
-        AccountsDao.#_instance = this;
+        if(TransactionsDao.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
+        TransactionsDao.#_instance = this;
     }
 
     static get instance() {
-        if(!AccountsDao.#_instance) AccountsDao.#_instance = new AccountsDao();
-        return AccountsDao.#_instance;
+        if(!TransactionsDao.#_instance) TransactionsDao.#_instance = new TransactionsDao();
+        return TransactionsDao.#_instance;
     }
-
-    create(account) {
-        account.id = HTTPRequest.post("/accounts", account.toJSON());
-    }
-
-    // given the current state of the application, there's no need to decouple accounts from account_holders
+    
     /* 
-        select
-            ac.*,
-            ah.*
+        select t.*
         from
-            accounts ac
-            inner join account_holders ah
-            on ac.account_holder = ah.id;
+            accounts a
+            inner join transactions t
+            on a.iban = t.remitter_iban or a.iban = t.beneficiary_iban
+        where a.id = ?;
     */
-    // handles both readAll() and readById() (overload)
+    /* MY SYNTAX:
+        select
+            transactions.remitter_iban,
+            transactions.beneficiary_iban,
+            transactions.amount,
+            transactions.transaction_date,
+            transactions.status
+        from
+            accounts
+            join transactions
+            on 
+                accounts.iban = transactions.remitter_iban or
+                accounts.iban = transactions.beneficiary_iban
+        where accounts.id = ?
+    */
+    // handles readByAccount()
     read(id) {
-        return id === undefined ? HTTPRequest.get("/accounts") : HTTPRequest.get("/accounts", id)[id];
+        return HTTPRequest.get("/api/transactions", id)[id];
     }
 
     // IMPLEMENT: handles both HTTP put and patch requests (overload)
-    update(account) {
-        HTTPRequest.put("/accounts", account.toJSON());
-    }
-
-    delete(id) {
-        HTTPRequest.delete("/accounts", id);
+    update(transaction) {
+        HTTPRequest.put("/api/transactions", transaction.toJSON());
     }
 
 }
 
 // converts objects and implements business logic
-class AccountsService extends ServiceInterface {
+class TransactionsService extends ServiceInterface {
 
     // SINGLETON
     static #_instance;
 
     constructor() {
         super();
-        if(AccountsService.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
-        AccountsService.#_instance = this;
+        if(TransactionsService.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
+        TransactionsService.#_instance = this;
     }
 
     static get instance() {
-        if(!AccountsService.#_instance) AccountsService.#_instance = new AccountsService();
-        return AccountsService.#_instance;
+        if(!TransactionsService.#_instance) TransactionsService.#_instance = new TransactionsService();
+        return TransactionsService.#_instance;
     }
 
-    #_accountsDao = AccountsDao.instance;
+    #_transactionsDao = TransactionsDao.instance;
+    #_accountsService = AccountsService.instance;
     // LAZY LOADING -> request the database for data once only
-    #_accounts = {};
+    // represents the transactions associated to the account searched
+    // serves as cache
+    #_transactions = {};
 
-    #load() {
+    #load(id) {
         // IMPLEMENT: assign objects using reflection from the reflective.js module
-        // eager loading: all throughout the application,
-        // accounts are always paired with their holders
-        Object.values(this.#_accountsDao.read()).forEach(account => {
-            this.#_accounts[account.id] = Factory.fromJSON(Account, account);
+        // eager loading: while in the transaction page,
+        // transactions are always paired with their holders
+        Object.values(this.#_transactionsDao.read(id)).forEach(transaction => {
+            this.#_transactions[transaction.id] = Factory.fromJSON(Transaction, transaction);
         });
     }
 
     // handles both getAll() and getById() (overload)
     get(id) {
-        // _accounts is empty: request data from database
-        if(Object.keys(this.#_accounts).length <= 0) this.#load();
-        return id === undefined ? this.#_accounts : this.#_accounts[id];
+        // _transactions is empty: request data from database
+        if(Object.keys(this.#_transactions).length <= 0) this.#load(id);
+        return id === undefined ? this.#_transactions : this.#_transactions[id];
     }
 
     // handles both create and update requests
@@ -94,8 +110,8 @@ class AccountsService extends ServiceInterface {
         // might cause longer refresh times on a real client-server architecture
         try {
             if(account !== null) {
-                account.id === null ? this.#_accountsDao.create(account) : this.#_accountsDao.update(account);
-                this.#_accounts[account.id] = account;
+                account.id === null ? this.#_transactionsDao.create(account) : this.#_transactionsDao.update(account);
+                this.#_transactions[account.id] = account;
             }
         } catch(error) {
             // IMPLEMENT: error handling logic (e.g. show error in DOM)
@@ -107,27 +123,33 @@ class AccountsService extends ServiceInterface {
         // instead of implementing validation logic, takes advantage of server-based logic
         // might cause longer refresh times on a real client-server architecture
         try {
-            this.#_accountsDao.delete(id);
-            delete this.#_accounts[id];
+            this.#_transactionsDao.delete(id);
+            delete this.#_transactions[id];
         } catch(error) {
             // IMPLEMENT: error handling logic (e.g. show error in DOM)
             console.error(error.message);
         }
     }
 
+    // IMPLEMENT: there should be search functionalities in AccountsService, as well
+    filter(accountHolderName) {
+        let account = this.#_accountsService.filter(accountHolderName);
+        this.get(account.id);
+    }
+
 }
 
 // handles data through services, prompts views for changes, dispatches events to change detection
 // DEBUG: error handling?
-class AccountsController extends ControllerInterface {
+class TransactionsController extends ControllerInterface {
 
     // SINGLETON
     static #_instance;
 
     constructor() {
         super();
-        if(AccountsController.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
-        AccountsController.#_instance = this;
+        if(TransactionsController.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
+        TransactionsController.#_instance = this;
         // IMPLEMENT: when I turn the website into a Single Page Application,
         // the event will be registered directly in the constructor of ChangeDetection,
         // for proper incapsulation
@@ -139,22 +161,22 @@ class AccountsController extends ControllerInterface {
     }
 
     static get instance() {
-        if(!AccountsController.#_instance) AccountsController.#_instance = new AccountsController();
-        return AccountsController.#_instance;
+        if(!TransactionsController.#_instance) TransactionsController.#_instance = new TransactionsController();
+        return TransactionsController.#_instance;
     }
 
-    #_accountsService = AccountsService.instance;
-    #_accountsView = AccountsView.instance;
+    #_transactionsService = TransactionsService.instance;
+    #_transactionsView = TransactionsView.instance;
 
     #removeButtonCallback;
     #transactionButtonCallback;
 
     save(account) {
-        this.#_accountsService.put(account);
+        this.#_transactionsService.put(account);
 
         reactor.dispatchEvent(
             "render_accounts",
-            this.#_accountsView.newAccountNode(account, this.#removeButtonCallback)
+            this.#_transactionsView.newAccountNode(account, this.#removeButtonCallback)
         );
 
         reactor.dispatchEvent(
@@ -165,14 +187,14 @@ class AccountsController extends ControllerInterface {
     }
 
     remove(id) {
-        this.#_accountsService.delete(id);
+        this.#_transactionsService.delete(id);
         reactor.dispatchEvent("render_accounts", id);
     }
 
     find(id) {
         reactor.dispatchEvent(
             "render_accounts",
-            this.#_accountsView.newAccountNodeList(this.#_accountsService.get(id), this.#removeButtonCallback)
+            this.#_transactionsView.newAccountNodeList(this.#_transactionsService.get(id), this.#removeButtonCallback)
         );
 
         reactor.dispatchEvent(
@@ -182,26 +204,30 @@ class AccountsController extends ControllerInterface {
         )
     }
 
-    // IMPLEMENT: filter by what? by AccountHolder?
-    filter() {
-        // renders the filtered list
+    search(accountHolderName) {
+        let transactions = this.#_transactionsService.filter(accountHolderName);
+        reactor.dispatchEvent(
+            "render_transactions",
+            // IMPLEMENT
+            () => {}
+        )
     }
 
 }
 
-class AccountsView {
+class TransactionsView {
 
     // SINGLETON
     static #_instance;
 
     constructor() {
-        if(AccountsView.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
-        AccountsView.#_instance = this;
+        if(TransactionsView.#_instance) throw new Error("Cannot instantiate multiple instances of " + this.constructor.name);
+        TransactionsView.#_instance = this;
     }
 
     static get instance() {
-        if(!AccountsView.#_instance) AccountsView.#_instance = new AccountsView();
-        return AccountsView.#_instance;
+        if(!TransactionsView.#_instance) TransactionsView.#_instance = new TransactionsView();
+        return TransactionsView.#_instance;
     }
 
     #genericAccountNode(dataId, col1Content, col2Content, col3Content, col4Content, col5Content) {
@@ -274,4 +300,4 @@ class AccountsView {
 
 }
 
-export default AccountsController.instance;
+export default TransactionsController.instance;
