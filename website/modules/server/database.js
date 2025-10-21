@@ -51,3 +51,37 @@ export class Database {
     }
 
 }
+
+// IMPLEMENT: move somewhere else
+const initial_transactions = {
+    1: {
+        id: 1,
+        remitter_iban: 'IT60X0542848988350000100000',
+        beneficiary_iban: 'IT60Y0542848988350000200000',
+        amount: 100.00,
+        transaction_date: '2025-10-21T10:00:00Z',
+    },
+    2: {
+        id: 2,
+        remitter_iban: null,
+        beneficiary_iban: 'IT60X0542848988350000100000',
+        amount: 500.00,
+        transaction_date: '2025-10-21T11:30:00Z',
+    },
+    3: {
+        id: 3,
+        remitter_iban: 'IT60Y0542848988350000200000',
+        beneficiary_iban: null,
+        amount: 25.00,
+        transaction_date: '2025-10-21T14:00:00Z',
+    },
+    4: {
+        id: 4,
+        remitter_iban: 'IT60X0542848988350000100000',
+        beneficiary_iban: 'EXTERNAL_IBAN_EXAMPLE_123',
+        amount: 50.00,
+        transaction_date: '2025-10-22T09:15:00Z',
+    }
+}
+
+if(!localStorage.getItem("transactions")) localStorage.setItem("transactions", JSON.stringify(initial_transactions));
