@@ -22,15 +22,88 @@
         </header>
 
         <main>
-            <form class="account-form">
-                <label for="first-name"></label>
-                <input type="text" class="form-input" name="first-name" placeholder="First name" required>
-                <label for="last-name"></label>
-                <input type="text" class="form-input" name="last-name" placeholder="Last name" required>
-                <label for="date-of-birth"></label>
-                <input type="date" class="form-input" name="date-of-birth" required>
-                <button type="submit">INVIA</button>
-            </form>
+            <div class="card">
+                <div class="card-header">Crea conto</div>
+                <div class="card-body">
+
+                    <form class="account-form">
+                        <div class="form-element">
+                            <label for="first-name">Nome:</label>
+                            <input type="text" id="first-name" name="first-name" class="form-input" placeholder="es. Marco" required>
+                        </div>
+                        <div class="form-element">
+                            <label for="last-name">Cognome:</label>
+                            <input type="text" id="last-name" name="last-name" class="form-input" placeholder="es. Rossi" required>
+                        </div>
+                        <div class="form-element">
+                            <label for="date-of-birth">Data di nascita:</label>
+                            <input type="date" id="date-of-birth" name="date-of-birth" class="form-input" required>
+                        </div>
+                        <div class="form-element">
+                            <label for="birthplace">Luogo di nascita:</label>
+                            <input type="text" id="birthplace" name="birthplace" class="form-input" placeholder="es. Roma" required>
+                        </div>
+                        <div class="form-element">
+                            <label for="gender">Genere:</label>
+                            <select id="gender" name="gender" class="form-input" required>
+                                <option disabled selected value>-</option>
+                                <option value="m">M</option>
+                                <option value="f">F</option>
+                            </select>
+                        </div>
+                        <div class="form-element">
+                            <label for="address">Indirizzo:</label>
+                            <input type="text" id="address" name="address" class="form-input" placeholder="es. via Mazzini, 1, Milano" required>
+                        </div>
+                        <div class="form-element">
+                            <label for="document-type">Documento:</label>
+                            <select id="document-type" name="document-type" class="form-input" required>
+                                <option disabled selected value>-</option>
+                                <option value="identity_card">carta d'identità</option>
+                                <option value="drivers_licence">patente</option>
+                                <option value="passport">passaporto</option>
+                            </select>
+                        </div>
+                        <div class="form-element">
+                            <label for="document-id">Numero documento:</label>
+                            <input type="text" id="document-id" name="document-id" class="form-input" placeholder="es. AB12345" required>
+                        </div>
+                        <div class="form-element">
+                            <label for="cellphone">Cellulare:</label>
+                            <input type="text" id="cellphone" name="cellphone" class="form-input" placeholder="es. +393492960312" required>
+                        </div>
+                        <div class="form-element">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" class="form-input" placeholder="es. mario.rossi@gmail.com" required>
+                        </div>
+                        <div class="form-element">
+                            <label for="cf">Codice fiscale:</label>
+                            <input type="text" id="cf" name="cf" class="form-input" placeholder="es. RSSMRI00R04H501L" required>
+                        </div>
+                        <!-- IMPLEMENT: make readonly. The server will generate it -->
+                        <div class="form-element">
+                            <label for="iban">Iban:</label>
+                            <input type="text" id="iban" name="iban" class="form-input" placeholder="es. IT60X0542848988350000100000" required>
+                        </div>
+                        <!-- IMPLEMENT: remove. Can be inferred from iban -->
+                        <div class="form-element">
+                            <label for="account-number">Numero di conto:</label>
+                            <input type="text" id="account-number" name="account-number" class="form-input" placeholder="es. 350000100000" required>
+                        </div>
+                        <!-- IMPLEMENT: make readonly. The server will generate it -->
+                        <div class="form-element">
+                            <label for="branch">Filiale:</label>
+                            <input type="text" id="branch" name="branch" class="form-input" placeholder="es. via Mazzini, 2, Roma" required>
+                        </div>
+                        <div class="form-element">
+                            <label for="balance">Saldo iniziale:</label>
+                            <input type="number" id="balance" name="balance" class="form-input" placeholder="es. 100" required>
+                        </div>
+                        <button type="submit" class="button">INVIA</button>
+                    </form>
+                    
+                </div>
+            </div>
         </main>
 
         <footer>

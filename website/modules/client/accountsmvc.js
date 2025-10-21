@@ -220,55 +220,29 @@ class AccountsView {
         return AccountsView.#_instance;
     }
 
-    #genericAccountNode(dataId, col1Content, col2Content, col3Content, col4Content, col5Content) {
-        let row = document.createElement("div");
-        row.classList.add("row");
+    #genericAccountNode(dataId, ...colContents) {
+        let row = document.createElement("tr");
         if(dataId) row.dataset.id = dataId;
 
-        let col1 = document.createElement("div")
-        col1.classList.add("col-3");
-        col1Content instanceof HTMLElement ? 
-        col1.appendChild(col1Content) :
-        col1.textContent = col1Content;
-
-        let col2 = document.createElement("div")
-        col2.classList.add("col-3");
-        col2Content instanceof HTMLElement ? 
-        col2.appendChild(col2Content) : 
-        col2.textContent = col2Content;
-
-        let col3 = document.createElement("div")
-        col3.classList.add("col-3");
-        col3Content instanceof HTMLElement ? 
-        col3.appendChild(col3Content) : 
-        col3.textContent = col3Content;
-
-        let col4 = document.createElement("div")
-        col4.classList.add("col-3");
-        col4Content instanceof HTMLElement ? 
-        col4.appendChild(col4Content) : 
-        col4.textContent = col4Content;
-
-        let col5 = document.createElement("div")
-        col5.classList.add("col-3");
-        col5Content instanceof HTMLElement ? 
-        col5.appendChild(col5Content) : 
-        col5.textContent = col5Content;
-
-        row.appendChild(col1);
-        row.appendChild(col2);
-        row.appendChild(col3);
-        row.appendChild(col4);
+        for(const colContent of colContents) {
+            const col = document.createElement("td");
+            colContent instanceof HTMLElement ? 
+            col.appendChild(colContent) :
+            col.textContent = colContent;
+            row.appendChild(col);
+        }
 
         return row;
     }
 
     newAccountNode(account, removeButtonCallback, transactionButtonCallback) {
         let removeButton = document.createElement("button");
+        removeButton.classList.add("button");
         removeButton.textContent = "ELIMINA";
         removeButton.addEventListener("click", () => removeButtonCallback(account.id));
 
-        let transactionButton = document.createElement("button")
+        let transactionButton = document.createElement("button");
+        transactionButton.classList.add("button");
         transactionButton.textContent = "VISUALIZZA TRANSAZIONI";
         transactionButton.addEventListener("click", () => transactionButtonCallback(account.iban));
 
@@ -277,13 +251,44 @@ class AccountsView {
             account.account_holder.first_name,
             account.account_holder.last_name,
             account.account_holder.date_of_birth,
+            account.account_holder.birthplace,
+            account.account_holder.gender,
+            account.account_holder.address,
+            account.account_holder.document_type,
+            account.account_holder.document_id,
+            account.account_holder.cellphone,
+            account.account_holder.email,
+            account.account_holder.cf,
+            account.iban,
+            account.branch,
+            account.balance,
+            account.status,
             removeButton,
             transactionButton
         );
     }
 
     newAccountNodeList(accounts, removeButtonCallback, transactionButtonCallback) {
-        let nodes = new Array(this.#genericAccountNode("", "NOME", "COGNOME", "DATA DI NASCITA", "", ""));
+        const FIELD_NAMES = [
+            "NOME",
+            "COGNOME",
+            "DATA DI NASCITA",
+            "LUOGO DI NASCITA",
+            "GENERE",
+            "INDIRIZZO",
+            "DOCUMENTO",
+            "NUMERO DOCUMENTO",
+            "CELLULARE",
+            "EMAIL",
+            "CODICE FISCALE",
+            "IBAN",
+            "FILIALE",
+            "SALDO",
+            "STATO",
+            "",
+            ""
+        ]
+        let nodes = new Array(this.#genericAccountNode("", ...FIELD_NAMES));
         Object.values(accounts).forEach((account) => nodes.push(this.newAccountNode(account, removeButtonCallback, transactionButtonCallback)));
         return nodes;
     }

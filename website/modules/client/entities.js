@@ -79,7 +79,7 @@ export class AccountHolder extends Entity {
     #_firstName;
     #_lastName;
     #_dateOfBirth;
-    #_birthPlace;
+    #_birthplace;
     #_gender;
     #_address;
     #_documentType;
@@ -88,12 +88,12 @@ export class AccountHolder extends Entity {
     #_email;
     #_cf;
 
-    constructor(id, firstName, lastName, dateOfBirth, birthPlace, gender, address, documentType, documentId, cellphone, email, cf) {
+    constructor(id, firstName, lastName, dateOfBirth, birthplace, gender, address, documentType, documentId, cellphone, email, cf) {
         super(id);
         this.#_firstName = firstName;
         this.#_lastName = lastName;
         this.#_dateOfBirth = dateOfBirth;
-        this.#_birthPlace = birthPlace;
+        this.#_birthplace = birthplace;
         this.#_gender = gender;
         this.#_address = address;
         this.#_documentType = documentType;
@@ -127,12 +127,12 @@ export class AccountHolder extends Entity {
         this.#_dateOfBirth = dateOfBirth;
     }
 
-    get birth_place() {
-        return this.#_birthPlace;
+    get birthplace() {
+        return this.#_birthplace;
     }
 
-    set birth_place(birthPlace) {
-        this.#_birthPlace = birthPlace;
+    set birthplace(birthplace) {
+        this.#_birthplace = birthplace;
     }
 
     get gender() {
@@ -140,7 +140,7 @@ export class AccountHolder extends Entity {
     }
 
     set gender(gender) {
-        if(!Object.values(Gender).includes(gender)) throw new TypeError("error: only Gender enum values accepted")
+        // if(!Object.values(Gender).includes(gender)) throw new TypeError("error: only Gender enum values accepted")
         this.#_gender = gender;
     }
 
@@ -157,7 +157,7 @@ export class AccountHolder extends Entity {
     }
 
     set document_type(documentType) {
-        if(!Object.values(DocumentType).includes(documentType)) throw new TypeError("error: only DocumentType enum values accepted")
+        // if(!Object.values(DocumentType).includes(documentType)) throw new TypeError("error: only DocumentType enum values accepted")
         this.#_documentType = documentType;
     }
 
@@ -247,7 +247,7 @@ export class Transaction extends Entity {
     }
 
     set status(status) {
-        if(!Object.values(TransactionStatus).includes(status)) throw new TypeError("error: only TransactionStatus enum values accepted")
+        // if(!Object.values(TransactionStatus).includes(status)) throw new TypeError("error: only TransactionStatus enum values accepted")
         this.#_status = status;
     }
 }
@@ -261,6 +261,7 @@ export class Account extends Entity {
     };
 
     #_iban;
+    // IMPLEMENT: remove. Can be inferred from iban. The dto won't need it.
     #_accountNumber;
     // even though this corresponds to the primary key of another table in the database,
     // I don't need that table in my frontend application
@@ -268,6 +269,7 @@ export class Account extends Entity {
     #_branch;
     // represents the 1:N relationship between account_holders(1) and accounts(N)
     #_accountHolder;
+    // IMPLEMENT: if not 0 at creation, the initial balance will be added as the first transaction of the account
     #_balance;
     #_status;
 
@@ -332,7 +334,7 @@ export class Account extends Entity {
     }
 
     set status(status) {
-        if(!Object.values(AccountStatus).includes(status)) throw new TypeError("error: only AccountStatus enum values accepted")
+        // if(!Object.values(AccountStatus).includes(status)) throw new TypeError("error: only AccountStatus enum values accepted")
         this.#_status = status;
     }
 

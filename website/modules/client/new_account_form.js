@@ -1,5 +1,5 @@
 import { FormInterface } from "/modules/js_framework/forms.js";
-import { Account, AccountHolder } from "/modules/client/entities.js";
+import { Account, AccountHolder, AccountStatus, Gender } from "/modules/client/entities.js";
 import { default as accountsController } from "/modules/client/accountsmvc.js";
 
 // TEMPLATE METHOD ANTI-PATTERN (ASYNCHRONOUS) (see forms.js)
@@ -13,16 +13,26 @@ export class AccountForm extends FormInterface {
 
     async onSubmit(formData) {
         const model = new Account(
-            formData.get("account-id"),
+            null,
             formData.get("iban"),
             formData.get("account-number"),
             formData.get("branch"),
             new AccountHolder(
-                formData.get("account-holder-id"),
+                null,
                 formData.get("first-name"),
                 formData.get("last-name"),
-                formData.get("date-of-birth")
-            )
+                formData.get("date-of-birth"),
+                formData.get("birthplace"),
+                Object.values(Gender).find((symbol) => symbol.description === formData.get("gender")),
+                formData.get("address"),
+                formData.get("document-type"),
+                formData.get("document-id"),
+                formData.get("cellphone"),
+                formData.get("email"),
+                formData.get("cf")
+            ),
+            formData.get("balance"),
+            AccountStatus.ACTIVE
         )
         return Promise.resolve(accountsController.save(model));
     }
