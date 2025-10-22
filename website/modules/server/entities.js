@@ -1,9 +1,6 @@
 import { Serializable } from "/modules/js_framework/reflective.js";
 
-// most validity checks will be handled in backend directly.
-// only enums are defined in frontend as well, for user friendly insertion
-
-// getter and setter names must match the names of database columns, for proper object hydration
+// IMPLEMENT: validity checks
 
 export const Gender = Object.freeze({
     M: Symbol("m"),
@@ -73,6 +70,35 @@ class Entity extends Serializable {
         return json;
 
     }
+}
+
+export class Branch extends Entity {
+
+    #_cab;
+    #_address;
+
+    constructor(id, cab, address) {
+        super(id);
+        this.#_cab = cab;
+        this.#_address = address;
+    }
+
+    get cab() {
+        return this.#_cab;
+    }
+
+    set cab(cab) {
+        this.#_cab = cab;
+    }
+
+    get address() {
+        return this.#_address;
+    }
+
+    set address(address) {
+        this.#_address = address;
+    }
+
 }
 
 export class AccountHolder extends Entity {
@@ -263,9 +289,6 @@ export class Account extends Entity {
     #_iban;
     // IMPLEMENT: remove. Can be inferred from iban. The dto won't need it.
     #_accountNumber;
-    // even though this corresponds to the primary key of another table in the database,
-    // I don't need that table in my frontend application
-    // (the logic for iban generation will be handled by the backend for security reasons)
     #_branch;
     // represents the 1:N relationship between account_holders(1) and accounts(N)
     #_accountHolder;

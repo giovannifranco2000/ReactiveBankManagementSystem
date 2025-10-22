@@ -1,7 +1,7 @@
 import { default as reactor } from "/modules/js_framework/reactive.js";
 import { default as HTTPRequest } from "/modules/js_framework/http.js";
 import { Factory } from "/modules/js_framework/reflective.js";
-import { Account } from "/modules/client/entities.js";
+import { AccountDetailsDto } from "/modules/client/dtos.js";
 import { DaoInterface, ServiceInterface, ControllerInterface } from "/modules/js_framework/mvc.js";
 
 // IMPLEMENT: CACHE -> already made account queries should be handled by cache
@@ -93,7 +93,7 @@ class AccountsService extends ServiceInterface {
         // eager loading: all throughout the application,
         // accounts are always paired with their holders
         Object.values(this.#_accountsDao.read()).forEach(account => {
-            this.#_accounts[account.id] = Factory.fromJSON(Account, account);
+            this.#_accounts[account.id] = Factory.fromJSON(AccountDetailsDto, account);
         });
     }
 
