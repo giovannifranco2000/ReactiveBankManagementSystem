@@ -1,4 +1,5 @@
 import { FormInterface } from "/modules/js_framework/forms.js";
+import { Factory } from "/modules/js_framework/reflective.js";
 import { AccountDetailsDto } from "/modules/client/dtos.js";
 import { default as accountsController } from "/modules/client/accountsmvc.js";
 
@@ -12,24 +13,26 @@ export class AccountForm extends FormInterface {
     }
 
     async onSubmit(formData) {
-        const model = new AccountDetailsDto(
-            null,
-            formData.get("first-name"),
-            formData.get("last-name"),
-            formData.get("date-of-birth"),
-            formData.get("birthplace"),
-            formData.get("gender"),
-            formData.get("address"),
-            formData.get("document-type"),
-            formData.get("document-id"),
-            formData.get("cellphone"),
-            formData.get("email"),
-            formData.get("cf"),
-            formData.get("iban"),
-            formData.get("branch"),
-            formData.get("balance"),
-            "active"
-        )
+        const model = Factory.fromFormData(AccountDetailsDto, formData);
+        model.status = "active";
+        // const model = new AccountDetailsDto(
+        //     null,
+        //     formData.get("first-name"),
+        //     formData.get("last-name"),
+        //     formData.get("date-of-birth"),
+        //     formData.get("birthplace"),
+        //     formData.get("gender"),
+        //     formData.get("address"),
+        //     formData.get("document-type"),
+        //     formData.get("document-id"),
+        //     formData.get("cellphone"),
+        //     formData.get("email"),
+        //     formData.get("cf"),
+        //     formData.get("iban"),
+        //     formData.get("branch"),
+        //     formData.get("balance"),
+        //     "active"
+        // )
         return Promise.resolve(accountsController.save(model));
     }
 

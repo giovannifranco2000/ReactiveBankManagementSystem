@@ -201,61 +201,31 @@ export class AccountDetailsDto extends Serializable {
 
 }
 
-export class TransactionDto extends Serializable {
+export class TransactionListDto extends Serializable {
 
-    #_remitterIban;
-    #_beneficiaryIban;
-    #_amount;
-    #_transactionDate;
-    #_status;
+    // or account id?
+    #_iban;
+    #_transactionList;
 
-    constructor(remitterIban, beneficiaryIban, amount, transactionDate, status) {
-        super();
-        this.#_remitterIban = remitterIban;
-        this.#_beneficiaryIban = beneficiaryIban;
-        this.#_amount = amount;
-        this.#_transactionDate = transactionDate;
-        this.#_status = status;
+    constructor(iban, transactionList) {
+        this.#_iban = iban;
+        this.#_transactionList = transactionList;
     }
 
-    get remitter_iban() {
-        return this.#_remitterIban;
+    get iban() {
+        return this.#_iban;
     }
 
-    set remitter_iban(remitterIban) {
-        this.#_remitterIban = remitterIban;
+    set iban(iban) {
+        this.#_iban = iban;
     }
 
-    get beneficiary_iban() {
-        return this.#_beneficiaryIban;
+    get transaction_list() {
+        return this.#_transactionList;
     }
 
-    set beneficiary_iban(beneficiaryIban) {
-        this.#_beneficiaryIban = beneficiaryIban;
-    }
-
-    get amount() {
-        return this.#_amount;
-    }
-
-    set amount(amount) {
-        this.#_amount = amount;
-    }
-
-    get transaction_date() {
-        return this.#_transactionDate;
-    }
-
-    set transaction_date(transactionDate) {
-        this.#_transactionDate = transactionDate;
-    }
-
-    get status() {
-        return this.#_status;
-    }
-
-    set status(status) {
-        this.#_status = status;
+    set transaction_list(transactionList) {
+        this.#_transactionList = transactionList;
     }
 
     // entities must only have private attributes with public getters

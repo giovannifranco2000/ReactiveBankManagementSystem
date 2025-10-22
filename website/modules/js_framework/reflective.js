@@ -39,6 +39,21 @@ export class Factory {
         return object;
     }
 
+    // expects to convert to DTOs
+    // does not perform object hydration
+    // IMPLEMENT: subforms should be treated as lists / objects,
+    // therefore object hydration should be implemented
+    static fromFormData(type, formData) {
+        if(formData === null || !(formData instanceof FormData)) return formData;
+        const object = Reflect.construct(type, []);
+        for(const [key, value] of formData.entries()) {
+            // the name of the key in value types must match the names of getters/setters,
+            // not that of the property
+            if(key in object) object[key] = formData.get(key);
+        }
+        return object;
+    }
+
 }
 
 export class Serializable extends Interface {

@@ -109,8 +109,8 @@ class AccountsService extends ServiceInterface {
         // instead of implementing validation logic, takes advantage of server-based logic
         // might cause longer refresh times on a real client-server architecture
         try {
-            if(account !== null) {
-                account.id === null ? this.#_accountsDao.create(account) : this.#_accountsDao.update(account);
+            if(account) {
+                (!account.id) ? this.#_accountsDao.create(account) : this.#_accountsDao.update(account);
                 this.#_accounts[account.id] = account;
             }
         } catch(error) {
