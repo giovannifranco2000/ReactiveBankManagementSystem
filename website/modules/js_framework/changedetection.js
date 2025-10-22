@@ -5,6 +5,10 @@ import { default as reactor } from "./reactive.js";
 // a new link is clicked, but, in the future, it will keep existing throughout all
 // the pages of the website. Change Detection logic will be changed accordingly
 
+// IMPLEMENT: decoupling. My change detection system is tightly linked to
+// my client-server architecture. It should be more generic, able to work for
+// any project
+
 // for accounts:
 // will listen to render events and handle them depending on their arguments
 // 1 argument (node) -> add to list or update existing node
