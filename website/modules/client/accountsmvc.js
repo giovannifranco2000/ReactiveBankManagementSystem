@@ -166,6 +166,7 @@ class AccountsController extends ControllerInterface {
     #transactionButtonCallback;
 
     save(account) {
+        console.log(account)
         this.#_accountsService.put(account);
 
         reactor.dispatchEvent(
@@ -248,17 +249,17 @@ class AccountsView {
 
         return this.#genericAccountNode(
             account.id,
-            account.account_holder.first_name,
-            account.account_holder.last_name,
-            account.account_holder.date_of_birth,
-            account.account_holder.birthplace,
-            account.account_holder.gender,
-            account.account_holder.address,
-            account.account_holder.document_type,
-            account.account_holder.document_id,
-            account.account_holder.cellphone,
-            account.account_holder.email,
-            account.account_holder.cf,
+            account.first_name,
+            account.last_name,
+            account.date_of_birth,
+            account.birthplace,
+            account.gender,
+            account.address,
+            account.document_type,
+            account.document_id,
+            account.cellphone,
+            account.email,
+            account.cf,
             account.iban,
             account.branch,
             account.balance,
