@@ -1,3 +1,4 @@
+import { default as reactor } from "./reactive.js";
 import { Database } from "/modules/server/database.js";
 
 // IMPLEMENT: this class should only send http requests to a simulated server.
@@ -11,6 +12,11 @@ import { Database } from "/modules/server/database.js";
 
 // expects to handle DTOs
 class HTTPRequest {
+
+    constructor() {
+        // communication via http protocol is simulated through events
+        reactor.registerEvent("http");
+    }
 
     #_database = new Database();
 
