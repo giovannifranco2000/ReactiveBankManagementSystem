@@ -33,6 +33,7 @@ export class AccountForm extends FormInterface {
         //     formData.get("balance"),
         //     "active"
         // )
+        this.form.reset();
         return Promise.resolve(accountsController.save(model));
     }
 

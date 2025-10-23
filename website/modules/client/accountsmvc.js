@@ -3,6 +3,7 @@ import { default as HTTPRequest } from "/modules/js_framework/http.js";
 import { Factory } from "/modules/js_framework/reflective.js";
 import { AccountDetailsDto } from "/modules/client/dtos.js";
 import { DaoInterface, ServiceInterface, ControllerInterface } from "/modules/js_framework/mvc.js";
+import { default as transactionsController } from "./transactionsmvc.js";
 
 // IMPLEMENT: CACHE -> already made account queries should be handled by cache
 // a cache associates the url of a get/post request to the data received,
@@ -29,7 +30,7 @@ class AccountsDao extends DaoInterface {
     }
 
     create(account) {
-        account.id = HTTPRequest.post("/api/accounts", account.toJSON());
+        account.id = HTTPRequest.post("/api/account-details", account.toJSON());
     }
 
     // given the current state of the application, there's no need to decouple accounts from account_holders
@@ -50,8 +51,8 @@ class AccountsDao extends DaoInterface {
             on accounts.id = account_holders.id
     */
     // handles both readAll() and readById() (overload)
-    read(id) {
-        return id === undefined ? HTTPRequest.get("/api/accounts") : HTTPRequest.get("/api/accounts", id)[id];
+    read() {
+        return HTTPRequest.get("/api/account-details");
     }
 
     // IMPLEMENT: handles both HTTP put and patch requests (overload)
@@ -61,13 +62,13 @@ class AccountsDao extends DaoInterface {
 
     // IMPLEMENT: cannot delete an account, must set its status to closed
     delete(id) {
-        HTTPRequest.delete("/api/accounts", id);
+        HTTPRequest.delete("/api/account-details", id);
     }
 
 }
 
 // converts objects and implements business logic
-class AccountsService extends ServiceInterface {
+export class AccountsService extends ServiceInterface {
 
     // SINGLETON
     static #_instance;
@@ -92,31 +93,31 @@ class AccountsService extends ServiceInterface {
         // IMPLEMENT: assign objects using reflection from the reflective.js module
         // eager loading: all throughout the application,
         // accounts are always paired with their holders
-        Object.values(this.#_accountsDao.read()).forEach(account => {
+        this.#_accountsDao.read().forEach(account => {
             this.#_accounts[account.id] = Factory.fromJSON(AccountDetailsDto, account);
         });
     }
 
-    // handles both getAll() and getById() (overload)
-    get(id) {
+    // IMPLEMENT: handles both getAll() and getById() (overload)
+    get() {
         // _accounts is empty: request data from database
         if(Object.keys(this.#_accounts).length <= 0) this.#load();
-        return id === undefined ? this.#_accounts : this.#_accounts[id];
+        return this.#_accounts;
     }
 
     // handles both create and update requests
     put(account) {
         // instead of implementing validation logic, takes advantage of server-based logic
         // might cause longer refresh times on a real client-server architecture
-        try {
+        // try {
             if(account) {
                 (!account.id) ? this.#_accountsDao.create(account) : this.#_accountsDao.update(account);
                 this.#_accounts[account.id] = account;
             }
-        } catch(error) {
+        // } catch(error) {
             // IMPLEMENT: error handling logic (e.g. show error in DOM)
-            console.error(error.message);
-        }
+            // console.error(error.message);
+        // }
     }
 
     delete(id) {
@@ -151,7 +152,12 @@ class AccountsController extends ControllerInterface {
         reactor.registerEvent("render_transactions");
         this.#removeButtonCallback = (id) => this.remove(id);
         // IMPLEMENT: should redirect to transactions page and show associated transactions
-        this.#transactionButtonCallback = (iban) => {};
+        this.#transactionButtonCallback = (id, iban) => {
+            // transactionsController.find(iban);
+            // DEBUG: temporary solution, because my webapp is not single page
+            const transactionsPageUrl = `/pages/transactions/transactions.html?iban=${iban}`;
+            window.location.replace(transactionsPageUrl);
+        };
     }
 
     static get instance() {
@@ -162,11 +168,12 @@ class AccountsController extends ControllerInterface {
     #_accountsService = AccountsService.instance;
     #_accountsView = AccountsView.instance;
 
+    #_transactionsController = transactionsController;
+
     #removeButtonCallback;
     #transactionButtonCallback;
 
     save(account) {
-        console.log(account)
         this.#_accountsService.put(account);
 
         reactor.dispatchEvent(
@@ -176,7 +183,6 @@ class AccountsController extends ControllerInterface {
 
         reactor.dispatchEvent(
             "render_transactions",
-            // IMPLEMENT
             () => {}
         )
     }
@@ -186,17 +192,11 @@ class AccountsController extends ControllerInterface {
         reactor.dispatchEvent("render_accounts", id);
     }
 
-    find(id) {
+    find() {
         reactor.dispatchEvent(
             "render_accounts",
-            this.#_accountsView.newAccountNodeList(this.#_accountsService.get(id), this.#removeButtonCallback)
+            this.#_accountsView.newAccountNodeList(this.#_accountsService.get(), this.#removeButtonCallback, this.#transactionButtonCallback)
         );
-
-        reactor.dispatchEvent(
-            "render_transactions",
-            // IMPLEMENT
-            () => {}
-        )
     }
 
     // IMPLEMENT: filter by what? by AccountHolder?

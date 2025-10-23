@@ -201,31 +201,71 @@ export class AccountDetailsDto extends Serializable {
 
 }
 
-export class TransactionListDto extends Serializable {
+export class TransactionsDto extends Serializable {
 
-    // or account id?
-    #_iban;
-    #_transactionList;
+    #_id;
+    #_remitterIban;
+    #_beneficiaryIban;
+    #_amount;
+    #_transactionDate;
+    #_status;
 
-    constructor(iban, transactionList) {
-        this.#_iban = iban;
-        this.#_transactionList = transactionList;
+    constructor(id, remitterIban, beneficiaryIban, amount, transactionDate, status) {
+        super();
+        this.#_id = id;
+        this.#_remitterIban = remitterIban;
+        this.#_beneficiaryIban = beneficiaryIban;
+        this.#_amount = amount;
+        this.#_transactionDate = transactionDate;
+        this.#_status = status;
     }
 
-    get iban() {
-        return this.#_iban;
+    get id() {
+        return this.#_id;
     }
 
-    set iban(iban) {
-        this.#_iban = iban;
+    set id(id) {
+        this.#_id = id;
     }
 
-    get transaction_list() {
-        return this.#_transactionList;
+    get remitter_iban() {
+        return this.#_remitterIban;
     }
 
-    set transaction_list(transactionList) {
-        this.#_transactionList = transactionList;
+    set remitter_iban(remitterIban) {
+        this.#_remitterIban = remitterIban;
+    }
+
+    get beneficiary_iban() {
+        return this.#_beneficiaryIban;
+    }
+
+    set beneficiary_iban(beneficiaryIban) {
+        this.#_beneficiaryIban = beneficiaryIban;
+    }
+
+    get amount() {
+        return this.#_amount;
+    }
+
+    set amount(amount) {
+        this.#_amount = amount;
+    }
+
+    get transaction_date() {
+        return this.#_transactionDate;
+    }
+
+    set transaction_date(transactionDate) {
+        this.#_transactionDate = transactionDate;
+    }
+
+    get status() {
+        return this.#_status;
+    }
+
+    set status(status) {
+        this.#_status = status;
     }
 
     // entities must only have private attributes with public getters

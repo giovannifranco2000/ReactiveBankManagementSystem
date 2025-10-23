@@ -95,6 +95,50 @@ class ChangeDetection {
 
         })
 
+        reactor.addEventListener("render_transactions", (event, arg) => {
+
+            let container = this.#_containers[event.name];
+
+            if(container) {
+
+                if(typeof arg === "number") {
+
+                    container.querySelector(`[data-id="${arg}"]`).remove();
+                
+                } else if(arg instanceof HTMLElement) {
+
+                    let oldElement = container.querySelector(`[data-id="${arg.dataset.id}"]`)
+                    oldElement ? oldElement.replaceWith(arg) : container.appendChild(arg);
+
+                } else if(Array.isArray(arg)) {
+
+                    container.innerHTML = "";
+                    for(let node of arg) container.appendChild(node);
+
+                }
+
+            }
+
+            let virtualDom = this.#getVirtualDom(event.name);
+
+            if(typeof arg === "number") {
+
+                virtualDom.remove(virtualDom.findByAttribute("data-id", `${arg}`));
+            
+            } else if(arg instanceof HTMLElement) {
+
+                let oldIndex = virtualDom.findByAttribute("data-id", `${arg.dataset.id}`);
+                oldIndex !== -1 ? virtualDom.replaceWith(oldIndex, arg) : virtualDom.appendChild(arg);
+
+            } else if(Array.isArray(arg)) {
+
+                virtualDom.empty();
+                for(let node of arg) virtualDom.appendChild(node);
+
+            } else console.warn("illegal event call: illegal argument type, no action expected\n" + event)
+
+        })
+
     }
 
 }
